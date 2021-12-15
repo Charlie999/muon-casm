@@ -3,7 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include <algorithm>
-#include <boost/program_options.hpp>
+#include "cxxopts/cxxopts.hpp"
 #include "asm.h"
 
 std::string infile;
@@ -40,42 +40,42 @@ enum modes {
 
 modes mode = COMPILE;
 
-namespace po = boost::program_options;
-
 int main(int argc, char** argv) {
 
     printf("CASM MUON-III assembler/emulator (C) Charlie 2021\n");
 
-    po::options_description desc("Options");
-    desc.add_options()
+    //po::options_description desc("Options");
+    cxxopts::Options options("casm", "MUON-III assembler/emlator");
+
+    /*desc.add_options()
             ("help", "show help message")
             ("emulate", "set mode to emulate")
             ("debug", "emulator debug mode")
             ("emuprint", "transparent terminal printing from emulator (disables normal emulator logging)")
-            ("input", po::value<std::string>(), "set input file");
+            ("input", po::value<std::string>(), "set input file");*/
 
-    po::variables_map vm;
-    po::store(po::parse_command_line(argc, argv, desc), vm);
-    po::notify(vm);
+    options.add_options()
+            ("h,help", "show help message")
+            ("e,emulate", "set mode to emulate")
+            ("d,debug", "emulator debug mode")
+            ("p,emuprint", "transparent terminal printing from emulator (disables normal emulator logging)")
+            ("i,input", "set input file", cxxopts::value<std::string>());
 
-    if (vm.count("help")) {
-        std::cout << desc << std::endl;
+    auto argsresult = options.parse(argc, argv);
+
+    if (argsresult.count("help")) {
+        std::cout << options.help();
         return 0;
     }
 
-    if (vm.count("emulate"))
+    if (argsresult.count("emulate"))
         mode = EMULATE;
     else
         mode = COMPILE;
 
-    if (!vm.count("input")) {
-        std::cout << desc << std::endl;
-        return 0;
-    }
-
     if (mode == COMPILE) {
         infile.clear();
-        infile.append(vm["input"].as<std::string>());
+        infile.append(argsresult["input"].as<std::string>());
 
         if (!exists(infile)) {
             printf("file doesn't exist: %s\n", infile.c_str());
@@ -134,7 +134,7 @@ int main(int argc, char** argv) {
         return 0;
     } else if (mode == EMULATE) {
         infile.clear();
-        infile.append(vm["input"].as<std::string>());
+        infile.append(argsresult["input"].as<std::string>());
 
         if (!exists(infile)) {
             printf("file doesn't exist: %s\n", infile.c_str());
@@ -155,6 +155,6 @@ int main(int argc, char** argv) {
             indata.push_back(line);
         }
 
-        emulate(indata, vm.count("debug")!=0, vm.count("emuprint")!=0);
+        emulate(indata, argsresult.count("debug"), argsresult.count("emuprint"));
     }
 }

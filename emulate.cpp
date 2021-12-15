@@ -164,7 +164,7 @@ void emulate(const std::vector<std::string>& rmem, bool dbg, bool ep) {
             }
         }
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(250));
+        //std::this_thread::sleep_for(std::chrono::milliseconds(250));
 
         if (!pcc) PC++;
         else pcc=0;
