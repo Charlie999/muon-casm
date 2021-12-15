@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.17)
+cmake_minimum_required(VERSION 3.16)
 project(casm)
 
 FIND_PACKAGE( Boost 1.40 COMPONENTS program_options REQUIRED )
