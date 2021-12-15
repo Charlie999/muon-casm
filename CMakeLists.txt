@@ -7,6 +7,8 @@ INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIRS} )
 MESSAGE("Boost include dirs: " ${Boost_INCLUDE_DIRS})
 MESSAGE("Boost libraries: " ${Boost_LIBRARIES})
 
+set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-Wa,-mbig-obj -static-libgcc -static-libstdc++")
+
 set(CMAKE_CXX_STANDARD 14)
 
 add_executable(casm main.cpp assemble.cpp insns.h asm.h emulate.cpp)
