@@ -4,7 +4,7 @@ pipeline {
     stage('Build') {
       steps {
         bat 'mkdir build'
-        bat 'cd build && cmake -DBoost_LIBRARY_DIR=C:/SDKs/boost_1_76_0/lib -DBoost_INCLUDE_DIR=C:/SDKs/boost_1_76_0 .. -G "Unix Makefiles"'
+        bat 'cd build && cmake -DBoost_LIBRARY_DIR=C:/SDKs/boost_1_78_0/lib64-msvc-14.2 -DBoost_INCLUDE_DIR=C:/SDKs/boost_1_78_0 .. -G "Unix Makefiles"'
         bat 'cd build && make'
       }
     }
