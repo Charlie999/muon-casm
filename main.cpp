@@ -68,6 +68,11 @@ int main(int argc, char** argv) {
         return 0;
     }
 
+    if (!argsresult.count("input")) {
+        std::cout << options.help();
+        return 0;
+    }
+
     if (argsresult.count("emulate"))
         mode = EMULATE;
     else
