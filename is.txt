@@ -1,0 +1,21 @@
+MUON-III instructions
+
+Oh god charlie here we go.
+
+D: data
+X: unused
+, another seperate data word stored in the next location in memory
+
+(where there is an E in front of the mnmonic its an extend
+where it reads onto the next word to get a full word of data, rather than using the 16
+ bits left with the other 8 taken by the opcode)
+
+	------
+JMP	01DDDD			Jumps to the address
+MOV	02DDDD,DDDDDD		Moves the data from the first address to the address in the second word.
+EJMP	03XXXX,DDDDDD
+EMOV    04XXXX,DDDDDD,DDDDDD
+CPSW 	05DDDD,DDDDDD		compares the PSW with the data in the first word (format to be decided) and if true, branches to the second adddress
+IADD	06DDDD,DDDDDD,DDDDDD	Loads from the first word into the A register, Second to the B, third is where the result is stored.
+INA	07DDDD			increments A (uses the data as the location for the scratchpad, can be left to zero)
+INB	08DDDD			Ditto above but on the B register
