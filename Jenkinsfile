@@ -14,5 +14,10 @@ pipeline {
       }
     }
 
+    post {
+        always {
+            archiveArtifacts artifacts: 'build/casm.exe', fingerprint: true
+        }
+    }
   }
 }
