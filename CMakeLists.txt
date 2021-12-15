@@ -1,7 +1,11 @@
 cmake_minimum_required(VERSION 3.16)
 project(casm)
 
-FIND_PACKAGE( Boost 1.40 COMPONENTS program_options REQUIRED )
+IF (WIN32)
+  FIND_PACKAGE( Boost 1.40 COMPONENTS REQUIRED )
+ELSE()
+  FIND_PACKAGE( Boost 1.40 COMPONENTS program_options REQUIRED )
+ENDIF()
 INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIRS} )
 
 MESSAGE("Boost include dirs: " ${Boost_INCLUDE_DIRS})
