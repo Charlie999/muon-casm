@@ -1,5 +1,5 @@
 pipeline {
-  agent windows-1
+  agent { label "windows-1" }
   stages {
     stage('Prepare') {
       steps {
