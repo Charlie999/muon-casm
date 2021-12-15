@@ -13,11 +13,11 @@ pipeline {
         sh 'cd build && make'
       }
     }
-
-    post {
-        always {
-            archiveArtifacts artifacts: 'build/casm.exe', fingerprint: true
-        }
-    }
+  }
+  
+  post {
+      always {
+          archiveArtifacts artifacts: 'build/casm.exe', fingerprint: true
+      }
   }
 }
