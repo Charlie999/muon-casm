@@ -4,6 +4,7 @@ node("windows-1") {
     dir("build"){
       bat 'cmake .. -G "Unix Makefiles"'
       bat 'make'
+      archiveArtifacts artifacts: 'casm.exe', fingerprint: true
       deleteDir()
     }
   }
@@ -13,23 +14,8 @@ node("master") {
     dir("build"){
       sh 'cmake .. -DUSE_GIT_VERSION=true -DBUILD_STATIC=true'
       sh 'make'
+      archiveArtifacts artifacts: 'casm-static*', fingerprint: true
       deleteDir()
-    }
-  }
-}
-
-pipeline{
-  post {
-    always {
-      node("windows-1"){
-        archiveArtifacts artifacts: 'build/casm.exe', fingerprint: true
-      }
-      node("master"){
-        archiveArtifacts artifacts: 'build/casm-static*', fingerprint: true
-      }
-    }
-    cleanup { 
-        cleanWs() 
     }
   }
 }
