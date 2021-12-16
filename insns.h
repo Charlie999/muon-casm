@@ -21,6 +21,22 @@
 #define CPU_INA 7
 #define CPU_INB 8
 
+#define UC_NOP  0x00
+#define UC_LD   0x01
+#define UC_AW   0x02
+#define UC_BW   0x03
+#define UC_CW   0x04
+#define UC_LA   0x05
+#define UC_AWI  0x06
+#define UC_BWI  0x07
+#define UC_PSWC 0x08
+#define UC_PCW  0x09
+#define UC_ALU  0x0a
+#define UC_ALUL 0x0b
+#define UC_IE   0x0c
+
+#define UCASM_SETINSN 0xFF
+
 #define VM_HALT 0xFF
 
 #endif //CASM_INSNS_H

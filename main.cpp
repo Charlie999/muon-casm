@@ -36,7 +36,8 @@ static inline std::string &trim(std::string &s) {
 
 enum pmodes {
     COMPILE,
-    EMULATE
+    EMULATE,
+    UCODE
 };
 enum omodes {
     HEX,
@@ -63,6 +64,7 @@ int main(int argc, char** argv) {
     options.add_options()
             ("h,help", "show help message")
             ("e,emulate", "set mode to emulate")
+            ("u,ucode","set mode to ucode compile")
             ("d,debug", "emulator debug mode")
             ("p,emuprint", "transparent terminal printing from emulator (disables normal emulator logging)")
             ("i,input", "set input file", cxxopts::value<std::string>())
@@ -83,6 +85,8 @@ int main(int argc, char** argv) {
 
     if (argsresult.count("emulate"))
         mode = EMULATE;
+    else if (argsresult.count("ucode"))
+        mode = UCODE;
     else
         mode = COMPILE;
 
@@ -95,8 +99,10 @@ int main(int argc, char** argv) {
         infile.clear();
         infile.append(argsresult["input"].as<std::string>());
 
-        ofile.clear();
-        ofile.append(argsresult["output"].as<std::string>());
+        if (argsresult.count("output")) {
+            ofile.clear();
+            ofile.append(argsresult["output"].as<std::string>());
+        }
 
         if (!exists(infile)) {
             printf("file doesn't exist: %s\n", infile.c_str());
@@ -202,5 +208,73 @@ int main(int argc, char** argv) {
         }
 
         emulate(indata, argsresult.count("debug"), argsresult.count("emuprint"));
+
+        return 0;
+    } else if (mode == UCODE) {
+        infile.clear();
+        infile.append(argsresult["input"].as<std::string>());
+
+        if (argsresult.count("output")) {
+            ofile.clear();
+            ofile.append(argsresult["output"].as<std::string>());
+        } else {
+            printf("Must specify output file for ucode mode\n");
+            std::cout << options.help();
+            exit(0);
+        }
+
+        if (!exists(infile)) {
+            printf("file doesn't exist: %s\n", infile.c_str());
+            exit(1);
+        }
+
+        printf("Reading input file %s\n", infile.c_str());
+
+        std::ifstream inf(infile.c_str());
+
+        std::string line;
+        while (std::getline(inf, line)) {
+            std::istringstream iss(line);
+            indata.push_back(line);
+        }
+
+        int san = 1;
+        while (san) {
+            int errs = 0;
+
+            for (int i = 0; i < indata.size(); i++) {
+                std::string iline = trim(indata.at(i));
+                if (iline.length() <= 1 || iline.c_str()[0] == ';') {
+                    errs++;
+                    indata.erase(indata.begin() + i);
+                }
+            }
+
+            if (errs == 0) san = 0;
+        }
+
+        std::vector<unsigned char> out = ucassemble(indata);
+
+        if (omode == HEX) {
+            std::ofstream wf(ofile, std::ios::out);
+            char tmp[10];
+            snprintf(tmp,10,"v2.0 raw\n");
+            wf.write(tmp,strlen(tmp));
+            for (unsigned char i : out) {
+                snprintf(tmp,8,"%02X\n",i);
+                wf.write(tmp,strlen(tmp));
+            }
+            wf.close();
+            printf("Written to %s\n",ofile.c_str());
+        } else if (omode == BINARY) {
+            std::ofstream wf(ofile, std::ios::out | std::ios::binary);
+            for (unsigned char a : out) {
+                wf.write(reinterpret_cast<const char *>(&a), 1);
+            }
+            wf.close();
+            printf("Written to %s\n",ofile.c_str());
+        }
+
+        return 0;
     }
 }

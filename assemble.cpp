@@ -41,6 +41,8 @@ int stoit(const std::string& opcr) {
         return INSN_CPSW;
     } else if (strcmp(opc, "dw")==0) {
         return INSN_DW;
+    } else if (opc[0] == ':') {
+        return INSN_DW;
     } else {
         printf("Unknown instruction [%s]\n",opc);
         exit(1);
