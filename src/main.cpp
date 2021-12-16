@@ -269,14 +269,14 @@ int main(int argc, char** argv) {
             snprintf(tmp,10,"v2.0 raw\n");
             wf.write(tmp,strlen(tmp));
             if (split) {
-                for (int i=0;i<128;i++) {
+                for (int i=0;i<2048;i++) {
                     snprintf(tmp, 8, "%02X\n", out.at(i));
                     wf.write(tmp, strlen(tmp));
                 }
                 std::ofstream sf(splitfile, std::ios::out);
                 snprintf(tmp,10,"v2.0 raw\n");
                 sf.write(tmp,strlen(tmp));
-                for (int i=128;i<256;i++) {
+                for (int i=2048;i<4096;i++) {
                     snprintf(tmp, 8, "%02X\n", out.at(i));
                     sf.write(tmp, strlen(tmp));
                 }
