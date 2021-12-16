@@ -3,10 +3,33 @@ project(casm)
 
 IF(WIN32)
   set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-Wa,-mbig-obj -static-libgcc -static-libstdc++")
-ELSE()
-  set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-static-libgcc -static-libstdc++")
 ENDIF()
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(casm src/main.cpp src/assemble.cpp src/insns.h src/asm.h src/emulate.cpp src/ucode.cpp)
+IF(USE_GIT_VERSION)
+  execute_process(COMMAND git log --pretty=format:'%h' -n 1
+          OUTPUT_VARIABLE GIT_REV
+          ERROR_QUIET)
+
+  string(STRIP "${GIT_REV}" GIT_REV)
+  string(SUBSTRING "${GIT_REV}" 1 7 GIT_REV)
+  set(VERSION "-${GIT_REV}-git")
+
+  IF ("NOT ${GIT_REV}" STREQUAL "")
+    execute_process(
+            COMMAND git describe --exact-match --tags
+            OUTPUT_VARIABLE GIT_TAG ERROR_QUIET)
+    set(VERSION "-${GIT_TAG}")
+  ENDIF()
+  message("** Set version to ${VERSION}")
+ENDIF()
+
+IF(BUILD_STATIC)
+  message("** Building static binaries")
+  set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-static")
+  link_libraries("-static")
+  add_executable(casm-static${VERSION} src/main.cpp src/assemble.cpp src/insns.h src/asm.h src/emulate.cpp src/ucode.cpp)
+ELSE()
+  add_executable(casm${VERSION} src/main.cpp src/assemble.cpp src/insns.h src/asm.h src/emulate.cpp src/ucode.cpp)
+ENDIF()
