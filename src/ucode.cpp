@@ -55,7 +55,8 @@ uint curinsn = 0;
 uchar ucount[256] = {0};
 
 std::vector<unsigned char> ucassemble(const std::vector<std::string>& insns) {
-    uchar ucrom[4096] = {0xF};
+    uchar ucrom[4096] = {0};
+    memset(ucrom, 0xf, 4096);
 
     for (const auto& l : insns) {
         std::vector<std::string> parts = split(l, " ");
