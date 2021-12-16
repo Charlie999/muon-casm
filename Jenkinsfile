@@ -14,7 +14,7 @@ node("master") {
   stage("Build CASM-STATIC for Linux") {
     git url: 'https://github.com/MUON-III/muon-casm.git'
     dir("build"){
-      sh 'cmake .. -DUSE_GIT_VERSION=true -DBUILD_STATIC=true'
+      sh 'cmake .. -DVERSION=latest -DBUILD_STATIC=true'
       sh 'make'
       archiveArtifacts artifacts: 'casm-static*', fingerprint: true
       deleteDir()
