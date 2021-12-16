@@ -69,7 +69,8 @@ int main(int argc, char** argv) {
             ("p,emuprint", "transparent terminal printing from emulator (disables normal emulator logging)")
             ("i,input", "set input file", cxxopts::value<std::string>())
             ("o,output", "set output file", cxxopts::value<std::string>())
-            ("binary","output ref in binary format");
+            ("binary","output ref in binary format")
+            ("ucodesplit","split ucode into lower and upper 2K (this file is the upper 2K)", cxxopts::value<std::string>());
 
     auto argsresult = options.parse(argc, argv);
 
@@ -254,18 +255,41 @@ int main(int argc, char** argv) {
         }
 
         std::vector<unsigned char> out = ucassemble(indata);
+        std::string splitfile;
+
+        bool split = argsresult.count("ucodesplit");
+        if (split) {
+            splitfile.clear();
+            splitfile.append(argsresult["ucodesplit"].as<std::string>());
+        }
 
         if (omode == HEX) {
             std::ofstream wf(ofile, std::ios::out);
             char tmp[10];
             snprintf(tmp,10,"v2.0 raw\n");
             wf.write(tmp,strlen(tmp));
-            for (unsigned char i : out) {
-                snprintf(tmp,8,"%02X\n",i);
-                wf.write(tmp,strlen(tmp));
+            if (split) {
+                for (int i=0;i<128;i++) {
+                    snprintf(tmp, 8, "%02X\n", out.at(i));
+                    wf.write(tmp, strlen(tmp));
+                }
+                std::ofstream sf(ofile, std::ios::out);
+                snprintf(tmp,10,"v2.0 raw\n");
+                sf.write(tmp,strlen(tmp));
+                for (int i=128;i<256;i++) {
+                    snprintf(tmp, 8, "%02X\n", out.at(i));
+                    sf.write(tmp, strlen(tmp));
+                }
+                sf.close();
+            } else {
+                for (unsigned char i : out) {
+                    snprintf(tmp, 8, "%02X\n", i);
+                    wf.write(tmp, strlen(tmp));
+                }
             }
             wf.close();
-            printf("Written to %s\n",ofile.c_str());
+            if (split) printf("Written lower 2K to %s and upper 2K to %s\n",ofile.c_str(),splitfile.c_str());
+            else printf("Written to %s\n",ofile.c_str());
         } else if (omode == BINARY) {
             std::ofstream wf(ofile, std::ios::out | std::ios::binary);
             for (unsigned char a : out) {
