@@ -31,9 +31,10 @@
 #define UC_BWI  0x07
 #define UC_PSWC 0x08
 #define UC_PCW  0x09
-#define UC_ALU  0x0a
-#define UC_ALUL 0x0b
-#define UC_IE   0x0c
+#define UC_BCHK 0x0a
+#define UC_ALU  0x0b
+#define UC_ALUL 0x0c
+#define UC_IE   0x0d
 #define UC_END  0x0f
 
 #define UCASM_SETINSN 0xFF

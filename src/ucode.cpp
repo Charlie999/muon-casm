@@ -35,6 +35,8 @@ int ucstoit(const std::string& opcr) {
         return UC_PSWC;
     } else if (strcmp(opc, "pcw")==0) {
         return UC_PCW;
+    } else if (strcmp(opc, "bchk")==0) {
+        return UC_BCHK;
     } else if (strcmp(opc, "alu")==0) {
         return UC_ALU;
     } else if (strcmp(opc, "alul")==0) {
