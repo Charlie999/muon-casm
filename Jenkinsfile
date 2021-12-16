@@ -4,15 +4,6 @@ node("windows-1") {
     bat 'cd build && cmake .. -G "Unix Makefiles"'
     bat 'cd build && make'
   }
-  
-  post {
-    always {
-        archiveArtifacts artifacts: 'build/casm.exe', fingerprint: true
-    }
-    cleanup { 
-        cleanWs() 
-    }
-  }
 }
 node("master") {
   stage("Build CASM-STATIC for Linux") {
@@ -20,13 +11,18 @@ node("master") {
     sh 'cd build && cmake .. -DUSE_GIT_VERSION=true -DBUILD_STATIC=true'
     sh 'cd build && make'
   }
-  
-  post {
+}
+
+post {
     always {
+      node("windows-1"){
+        archiveArtifacts artifacts: 'build/casm.exe', fingerprint: true
+      }
+      node("master"){
         archiveArtifacts artifacts: 'build/casm-static*', fingerprint: true
+      }
     }
     cleanup { 
         cleanWs() 
     }
   }
-}
