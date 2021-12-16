@@ -6,9 +6,12 @@ node("windows-1") {
   }
   
   post {
-      always {
-          archiveArtifacts artifacts: 'build/casm.exe', fingerprint: true
-      }
+    always {
+        archiveArtifacts artifacts: 'build/casm.exe', fingerprint: true
+    }
+    cleanup { 
+        cleanWs() 
+    }
   }
 }
 node("master") {
@@ -19,8 +22,11 @@ node("master") {
   }
   
   post {
-      always {
-          archiveArtifacts artifacts: 'build/casm-static*', fingerprint: true
-      }
+    always {
+        archiveArtifacts artifacts: 'build/casm-static*', fingerprint: true
+    }
+    cleanup { 
+        cleanWs() 
+    }
   }
 }
