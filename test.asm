@@ -1,2 +1,2 @@
-jmp 1
+mov 1 2
 jmp 0

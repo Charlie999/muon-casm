@@ -7,6 +7,7 @@
 #include "asm.h"
 
 std::string infile;
+std::string ofile;
 std::vector<std::string> indata;
 std::vector<unsigned char> outbuf;
 
@@ -33,12 +34,17 @@ static inline std::string &trim(std::string &s) {
     return ltrim(rtrim(s));
 }
 
-enum modes {
+enum pmodes {
     COMPILE,
     EMULATE
 };
+enum omodes {
+    HEX,
+    BINARY
+};
 
-modes mode = COMPILE;
+pmodes mode = COMPILE;
+omodes omode = HEX;
 
 int main(int argc, char** argv) {
 
@@ -59,7 +65,9 @@ int main(int argc, char** argv) {
             ("e,emulate", "set mode to emulate")
             ("d,debug", "emulator debug mode")
             ("p,emuprint", "transparent terminal printing from emulator (disables normal emulator logging)")
-            ("i,input", "set input file", cxxopts::value<std::string>());
+            ("i,input", "set input file", cxxopts::value<std::string>())
+            ("o,output", "set output file", cxxopts::value<std::string>())
+            ("binary","output files in binary format");
 
     auto argsresult = options.parse(argc, argv);
 
@@ -78,9 +86,17 @@ int main(int argc, char** argv) {
     else
         mode = COMPILE;
 
+    if (argsresult.count("binary"))
+        omode = BINARY;
+    else
+        omode = HEX;
+
     if (mode == COMPILE) {
         infile.clear();
         infile.append(argsresult["input"].as<std::string>());
+
+        ofile.clear();
+        ofile.append(argsresult["output"].as<std::string>());
 
         if (!exists(infile)) {
             printf("file doesn't exist: %s\n", infile.c_str());
@@ -131,9 +147,34 @@ int main(int argc, char** argv) {
             }
         }
 
-        printf("v2.0 raw\n");
-        for (unsigned int i : out) {
-            printf("%06x\n", i);
+        if (omode == HEX && ofile.length() == 0) {
+            printf("v2.0 raw\n");
+            for (unsigned int i : out) {
+                printf("%06x\n", i);
+            }
+        } else if (omode == HEX) {
+            std::ofstream wf(ofile, std::ios::out);
+            char tmp[10];
+            snprintf(tmp,10,"v2.0 raw\n");
+            wf.write(tmp,strlen(tmp));
+            for (unsigned int i : out) {
+                snprintf(tmp,8,"%06X\n",i);
+                wf.write(tmp,strlen(tmp));
+            }
+            wf.close();
+            printf("Written to %s\n",ofile.c_str());
+        } else if (omode == BINARY) {
+            std::ofstream wf(ofile, std::ios::out | std::ios::binary);
+            for (unsigned int i : out) {
+                unsigned char a = (i&0xFF0000)>>16;
+                unsigned char b = (i&0xFF00)>>8;
+                unsigned char c = (i&0xFF);
+                wf.write(reinterpret_cast<const char *>(&a), 1);
+                wf.write(reinterpret_cast<const char *>(&b), 1);
+                wf.write(reinterpret_cast<const char *>(&c), 1);
+            }
+            wf.close();
+            printf("Written to %s\n",ofile.c_str());
         }
 
         return 0;
