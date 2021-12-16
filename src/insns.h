@@ -34,6 +34,7 @@
 #define UC_ALU  0x0a
 #define UC_ALUL 0x0b
 #define UC_IE   0x0c
+#define UC_END  0x0f
 
 #define UCASM_SETINSN 0xFF
 

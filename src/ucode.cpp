@@ -41,6 +41,8 @@ int ucstoit(const std::string& opcr) {
         return UC_ALUL;
     } else if (strcmp(opc, "ie")==0) {
         return UC_IE;
+    } else if (strcmp(opc, "end")==0) {
+        return UC_END;
     } else if (opc[0] == ':') {
         return UCASM_SETINSN;
     } else {
@@ -53,7 +55,7 @@ uint curinsn = 0;
 uchar ucount[256] = {0};
 
 std::vector<unsigned char> ucassemble(const std::vector<std::string>& insns) {
-    uchar ucrom[4096] = {0};
+    uchar ucrom[4096] = {0xF};
 
     for (const auto& l : insns) {
         std::vector<std::string> parts = split(l, " ");
