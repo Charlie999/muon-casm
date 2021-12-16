@@ -1,8 +1,8 @@
 node("windows-1") {
   stage("Build CASM for Windows") {
     dir("build"){
-      bat 'cd build && cmake .. -G "Unix Makefiles"'
-      bat 'cd build && make'
+      bat 'cmake .. -G "Unix Makefiles"'
+      bat 'make'
       deleteDir()
     }
   }
@@ -10,8 +10,8 @@ node("windows-1") {
 node("master") {
   stage("Build CASM-STATIC for Linux") {
     dir("build"){
-      sh 'cd build && cmake .. -DUSE_GIT_VERSION=true -DBUILD_STATIC=true'
-      sh 'cd build && make'
+      sh 'cmake .. -DUSE_GIT_VERSION=true -DBUILD_STATIC=true'
+      sh 'make'
       deleteDir()
     }
   }
