@@ -3,7 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include <algorithm>
-#include "cxxopts/cxxopts.hpp"
+#include "../cxxopts/cxxopts.hpp"
 #include "asm.h"
 
 std::string infile;
@@ -69,7 +69,7 @@ int main(int argc, char** argv) {
             ("p,emuprint", "transparent terminal printing from emulator (disables normal emulator logging)")
             ("i,input", "set input file", cxxopts::value<std::string>())
             ("o,output", "set output file", cxxopts::value<std::string>())
-            ("binary","output files in binary format");
+            ("binary","output ref in binary format");
 
     auto argsresult = options.parse(argc, argv);
 

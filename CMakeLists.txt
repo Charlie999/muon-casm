@@ -9,4 +9,4 @@ ENDIF()
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(casm main.cpp assemble.cpp insns.h asm.h emulate.cpp ucode.cpp)
+add_executable(casm src/main.cpp src/assemble.cpp src/insns.h src/asm.h src/emulate.cpp src/ucode.cpp)
