@@ -70,6 +70,7 @@ int main(int argc, char** argv) {
             ("i,input", "set input file", cxxopts::value<std::string>())
             ("o,output", "set output file", cxxopts::value<std::string>())
             ("binary","output ref in binary format")
+            ("movswap","swap mov operands")
             ("ucodesplit","split ucode into lower and upper 2K (this file is the upper 2K)", cxxopts::value<std::string>());
 
     auto argsresult = options.parse(argc, argv);
@@ -135,9 +136,11 @@ int main(int argc, char** argv) {
             if (errs == 0) san = 0;
         }
 
+        bool movswap = argsresult.count("help")!=0;
+
         std::vector<unsigned int> out;
         for (auto &i : indata) {
-            std::vector<unsigned char> t = assemble(i);
+            std::vector<unsigned char> t = assemble(i,movswap);
             int q = 0;
             for (unsigned char &j : t) {
                 if ((q % 3) == 0) {

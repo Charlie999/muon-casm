@@ -75,7 +75,7 @@ void ierror1(const std::string& reason, const std::string& operand) {
 
 #define uint unsigned int
 
-std::vector<unsigned char> assemble(const std::string& insnraw) {
+std::vector<unsigned char> assemble(const std::string& insnraw,bool movswap) {
     std::vector<std::string> insn = split(insnraw," ");
 
     int itype = stoit(insn.at(0));
@@ -86,8 +86,13 @@ std::vector<unsigned char> assemble(const std::string& insnraw) {
         case INSN_MOV: {
             if (insn.size() != 3)
                 ierror0("invalid instruction format",insnraw);
-            uint b = decodeint(insn.at(1));
-            uint a = decodeint(insn.at(2));
+            uint a = decodeint(insn.at(1));
+            uint b = decodeint(insn.at(2));
+            if (movswap) {
+                uint c = a;
+                a = b;
+                b = c;
+            }
             if (a <= 0xFFFF) {
                 ret.push_back(CPU_MOV);
                 ret.push_back((a&0xFF00)>>8);

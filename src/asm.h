@@ -2,7 +2,7 @@
 #ifndef CASM_ASM_H
 #define CASM_ASM_H
 
-std::vector<unsigned char> assemble(const std::string&);
+std::vector<unsigned char> assemble(const std::string&,bool);
 std::vector<unsigned char> ucassemble(const std::vector<std::string>&);
 void emulate(const std::vector<std::string>&, bool, bool);
 
