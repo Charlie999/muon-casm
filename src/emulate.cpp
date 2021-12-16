@@ -39,14 +39,14 @@ i24 I24(uint a) {
 i24 memory[16777216];
 
 void write24(i24 a, i24 d) {
-    if (I(a) == 0xFF0000) {
+    if (I(a) == 0xF00000) {
         uchar a_ = (I(d)&0xFF0000)>>16;
         uchar b_ = (I(d)&0xFF00)>>8;
         uchar c_ = (I(d)&0xFF);
 
         if (!uep) {regdump();log("VTERM PRINT: %c%c%c\n",a_,b_,c_);}
         else printf("%c%c%c",a_,b_,c_);
-    } else if (I(a) == 0xFF0001) {
+    } else if (I(a) == 0xF00001) {
         regdump();
         log("VTERM IPRINT: 0x%06X\n",I(d));
     } else {
