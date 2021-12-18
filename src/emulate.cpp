@@ -3,6 +3,7 @@
 #include <chrono>
 #include <thread>
 #include <cstring>
+#include <fstream>
 #include "asm.h"
 #include "insns.h"
 
@@ -18,7 +19,7 @@ unsigned char *ucra = nullptr;
 #define alog(args...) {printf(args);}
 #define dlog(args...) if(udbg && !uep) {printf(args);}
 
-uint memory[16777216];
+uint memory[16777215];
 
 uint PC = 0;
 
@@ -35,6 +36,10 @@ void setpswequals() {
 
 uint load(uint addr) {
     dlog("LOAD @0x%06X [0x%06X]\n",addr, memory[addr]);
+    if (addr >= 0xFFFE00) {
+        uint ucromaddr = addr-0xFFFE00;
+        return ucra[ucromaddr];
+    }
     return memory[addr];
 }
 
@@ -63,13 +68,41 @@ uint A,B;
 
 uint iar = 0;
 
+std::string df;
+
+void emufinish(int code) {
+    if (df.length() > 0) {
+        printf("Writing memory dump to %s\n",df.c_str());
+        udbg = false;
+        auto *memblob = (unsigned char*)malloc(16777215 * 3);
+        for (int i=0;i<16777215;i++) { // slow, I know, but needed for the WCS etc
+            uint data = load(i);
+            uchar a = (data&0xFF0000)>>16;
+            uchar b = (data&0xFF00)>>8;
+            uchar c = (data&0xFF);
+            memblob[(i*3)] = a;
+            memblob[(i*3)+1] = b;
+            memblob[(i*3)+2] = c;
+        }
+
+        std::ofstream dumpfile(df, std::ios::out | std::ios::binary);
+        if (!dumpfile.write(reinterpret_cast<const char *>(memblob), 1677215 * 3)) {
+            printf("Error writing dump!\n");
+        }
+        dumpfile.close();
+        printf("Written %d bytes.\n",1677215*3);
+    }
+    exit(code);
+}
+
 void _do_74181_logical(uchar sel, uint idr, uchar la);
 void _do_74181_arithmetic(uchar sel, uint idr, uchar la);
 
-void emulate(const std::vector<std::string>& rmem, unsigned char* ucrom, bool dbg, bool ep) {
+void emulate(const std::vector<std::string>& rmem, unsigned char* ucrom, const std::string& dumpfile, bool dbg, bool ep) {
     udbg = dbg;
     uep = ep;
     ucra = ucrom;
+    df = dumpfile;
     printf("constructing memory...\n");
 
     int i = 0;
@@ -100,7 +133,6 @@ void emulate(const std::vector<std::string>& rmem, unsigned char* ucrom, bool db
 
             switch (ucr[i]&0xF) {
                 case UC_NOP:
-                    exit(0);
                     break;
                 case UC_AW:
                     if (la) A = idr;
@@ -159,7 +191,7 @@ void emulate(const std::vector<std::string>& rmem, unsigned char* ucrom, bool db
 
             if (i==15 && (ucr[i]&0xF) == 0) {
                 log("prevented infinite ucode loop, emulator exiting.\n");
-                exit(0);
+                emufinish(-1);
             }
         }
 

@@ -72,6 +72,7 @@ int main(int argc, char** argv) {
             ("binary","output ref in binary format")
             ("movswap","swap mov operands")
             ("ucrom","ucode ROM for emulation", cxxopts::value<std::string>())
+            ("coredump","(optional) save a memory dump from the emulator upon exit", cxxopts::value<std::string>())
             ("ucodesplit","split ucode into lower and upper 2K (this file is the upper 2K)", cxxopts::value<std::string>());
 
     auto argsresult = options.parse(argc, argv);
@@ -229,7 +230,10 @@ int main(int argc, char** argv) {
         }
         ucs.close();
 
-        emulate(indata, ucrom, argsresult.count("debug"), argsresult.count("emuprint"));
+        std::string cdf;
+        if (argsresult.count("coredump"))
+            cdf = argsresult["coredump"].as<std::string>();
+        emulate(indata, ucrom, cdf, argsresult.count("debug"), argsresult.count("emuprint"));
 
         return 0;
     } else if (mode == UCODE) {
