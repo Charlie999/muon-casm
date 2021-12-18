@@ -19,9 +19,9 @@ int ucstoit(const std::string& opcr) {
         return UC_NOP;
     } else if (strcmp(opc, "ld")==0) {
         return UC_LD;
-    } else if (strcmp(opc, "aw")==0) {
+    } else if (strcmp(opc, "aw")==0 || strcmp(opc, "lda")==0) {
         return UC_AW;
-    } else if (strcmp(opc, "bw")==0) {
+    } else if (strcmp(opc, "bw")==0 || strcmp(opc, "ldb")==0) {
         return UC_BW;
     } else if (strcmp(opc, "smm")==0) {
         return UC_SMM;
