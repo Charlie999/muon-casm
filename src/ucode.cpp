@@ -23,8 +23,8 @@ int ucstoit(const std::string& opcr) {
         return UC_AW;
     } else if (strcmp(opc, "bw")==0) {
         return UC_BW;
-    } else if (strcmp(opc, "cw")==0) {
-        return UC_CW;
+    } else if (strcmp(opc, "smm")==0) {
+        return UC_SMM;
     } else if (strcmp(opc, "la")==0) {
         return UC_LA;
     } else if (strcmp(opc, "awi")==0) {
@@ -81,7 +81,7 @@ std::vector<unsigned char> ucassemble(const std::vector<std::string>& insns) {
                 ierror0("invalid insn number",l);
 
             curinsn = t;
-        } else if (i == UC_ALU || i == UC_ALUL) {
+        } else if (i == UC_ALU || i == UC_ALUL || i == UC_SMM) {
             if (ucount[curinsn] >= 16)
                 ierror0("too many uops",l);
 

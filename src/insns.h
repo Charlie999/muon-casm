@@ -25,7 +25,7 @@
 #define UC_LD   0x01
 #define UC_AW   0x02
 #define UC_BW   0x03
-#define UC_CW   0x04
+#define UC_SMM  0x04
 #define UC_LA   0x05
 #define UC_AWI  0x06
 #define UC_BWI  0x07
