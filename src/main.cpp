@@ -71,6 +71,7 @@ int main(int argc, char** argv) {
             ("o,output", "set output file", cxxopts::value<std::string>())
             ("binary","output ref in binary format")
             ("movswap","swap mov operands")
+            ("ucrom","ucode ROM for emulation", cxxopts::value<std::string>())
             ("ucodesplit","split ucode into lower and upper 2K (this file is the upper 2K)", cxxopts::value<std::string>());
 
     auto argsresult = options.parse(argc, argv);
@@ -192,6 +193,14 @@ int main(int argc, char** argv) {
         infile.clear();
         infile.append(argsresult["input"].as<std::string>());
 
+        if (!argsresult.count("ucrom")) {
+            printf("--ucrom required for emulation!\n");
+            std::cout << options.help();
+            return 0;
+        }
+
+        std::string ucfile = argsresult["ucrom"].as<std::string>();
+
         if (!exists(infile)) {
             printf("file doesn't exist: %s\n", infile.c_str());
             exit(1);
@@ -211,7 +220,16 @@ int main(int argc, char** argv) {
             indata.push_back(line);
         }
 
-        emulate(indata, argsresult.count("debug"), argsresult.count("emuprint"));
+        printf("Reading microcode ROM %s\n",ucfile.c_str());
+        auto *ucrom = (unsigned char*)malloc(4096);
+        std::ifstream ucs (ucfile, std::ios::in | std::ios::binary);
+        if (!ucs.read(reinterpret_cast<char *>(ucrom), 4096)) {
+            printf("error reading ucode rom from file\n");
+            exit(1);
+        }
+        ucs.close();
+
+        emulate(indata, ucrom, argsresult.count("debug"), argsresult.count("emuprint"));
 
         return 0;
     } else if (mode == UCODE) {

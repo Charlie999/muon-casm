@@ -2,171 +2,296 @@
 #include <string>
 #include <chrono>
 #include <thread>
+#include <cstring>
 #include "asm.h"
 #include "insns.h"
 
-struct i24{
-    unsigned int d : 24;
-};
-
-#define I(A) A.d
 #define uchar unsigned char
 #define uint unsigned int
 
-
-uint PC = 0;
-uchar pcc = 0;
-
-i24 A;
-i24 B;
-
 bool uep = false;
+bool udbg = false;
 
-void regdump() {
-    printf("[PC=0x%06X,A=0x%06X,B=0x%06X] ",PC,I(A),I(B));
-}
+unsigned char *ucra = nullptr;
 
 #define log(args...) if (!uep) {printf(args);}
 #define alog(args...) {printf(args);}
-#define dlog(args...) if(udbg && !uep) {regdump();printf(args);}
+#define dlog(args...) if(udbg && !uep) {printf(args);}
 
-i24 I24(uint a) {
-    i24 ret{};
-    ret.d = a&0xFFFFFF;
-    return ret;
+uint memory[16777216];
+
+uint PC = 0;
+
+uchar smm = 0;
+
+uchar psw;
+
+void setpswcarry() {
+    psw |= 0b1;
+}
+void setpswequals() {
+    psw |= 0b10;
 }
 
-i24 memory[16777216];
+uint load(uint addr) {
+    dlog("LOAD @0x%06X [0x%06X]\n",addr, memory[addr]);
+    return memory[addr];
+}
 
-void write24(i24 a, i24 d) {
-    if (I(a) == 0xF00000) {
-        uchar a_ = (I(d)&0xFF0000)>>16;
-        uchar b_ = (I(d)&0xFF00)>>8;
-        uchar c_ = (I(d)&0xFF);
+void store(uint addr, uint data) {
+    if (addr >= 0xFFFFFF) ierror0("Invalid memory write", "[EMULATOR=>store()]");
 
-        if (!uep) {regdump();log("VTERM PRINT: %c%c%c\n",a_,b_,c_);}
-        else printf("%c%c%c",a_,b_,c_);
-    } else if (I(a) == 0xF00001) {
-        regdump();
-        log("VTERM IPRINT: 0x%06X\n",I(d));
-    } else {
-        memory[I(a)].d = I(d);
+    dlog("STORE @0x%06X [0x%06X]\n",addr, data);
+    if (addr >= 0xFFFE00) {
+        uint ucromaddr = addr-0xFFFE00;
+        ucra[ucromaddr] = (data&0xFF);
+        printf("WCS WRITE 0x%03X [0x%02X]\n",ucromaddr,ucra[ucromaddr]);
+        return;
+    } else if (addr == 0xF00000) {
+        uchar a = (data&0xFF0000)>>16;
+        uchar b = (data&0xFF00)>>8;
+        uchar c = (data&0xFF);
+        printf("TERMINAL_WRITE: %c%c%c\n",a,b,c);
+        return;
     }
+    memory[addr] = data;
 }
 
-i24 read24(i24 a) {
-    if (I(a) == 0xFFFFFE)
-        return I24(0xf0); // tells the OS that this is a VM
-    return memory[I(a)];
-}
+uchar hlt;
 
-struct PSW_t {
-    uchar hlt;
-};
+uint A,B;
 
-PSW_t psw;
-bool udbg = false;
+uint iar = 0;
 
-void emulate(const std::vector<std::string>& rmem, bool dbg, bool ep) {
+void _do_74181_logical(uchar sel, uint idr, uchar la);
+void _do_74181_arithmetic(uchar sel, uint idr, uchar la);
+
+void emulate(const std::vector<std::string>& rmem, unsigned char* ucrom, bool dbg, bool ep) {
     udbg = dbg;
     uep = ep;
-    log("constructing memory...\n");
+    ucra = ucrom;
+    printf("constructing memory...\n");
 
     int i = 0;
     for (i=0;i<rmem.size();i++) {
         uint t = std::stoul(rmem.at(i), nullptr, 16);
         dlog("memory @loc=%d : %06X\n",i,t);
-        memory[i] = I24(t);
+        memory[i] = t;
     }
     dlog("populated words 0x%06X - 0x%06X\n",0,i-1);
 
-    while (psw.hlt == 0) {
-        i24 v = read24(I24(PC));
+    while (hlt == 0) {
+        uint idr = load(PC);
 
-        uchar opc = (I(v)&0xFF0000)>>16;
-        uchar b = (I(v)&0xFF00)>>8;
-        uchar c = (I(v)&0xFF);
+        uchar opc = (idr & 0xFF0000) >> 16;
+        uchar ucr[16];
 
-        switch (opc) {
-            case VM_HALT: {
-                dlog("VM HALT\n");
-                psw.hlt = 1;
-                break;
-            }
-            case CPU_NOP: {
-                dlog("NOP\n");
-                break;
-            }
-            case CPU_JMP: {
-                uint addr = (b<<8) | c;
-                dlog("JMP  \tto 0x%06X\n",addr);
-                PC = addr;
-                pcc = 1;
-                break;
-            }
-            case CPU_MOV: {
-                PC++;
-                uint addr = (b<<8) | c;
-                i24 o = read24(I24(PC)); //memory[PC];
-                PC--; // for logging
-                dlog("MOV  \tfrom 0x%06X to 0x%06X\n",addr, I(o));
-                PC++;
-                write24(o, read24(I24(addr))); //memory[I(o)] = memory[addr];
-                break;
-            }
-            case CPU_EJMP: {
-                PC++;
-                i24 o = read24(I24(PC)); //memory[PC];
-                PC--; // for logging
-                dlog("EJMP \tto 0x%06X\n",I(o));
-                PC = I(o);
-                pcc = 1;
-                break;
-            }
-            case CPU_IADD: {
-                uint aa = (b<<8) | c;
-                i24 ba = read24(I24(++PC));
-                i24 ca = read24(I24(++PC));
-                PC-=2;
-                uint av = I(read24(I24(aa))); //I(memory[aa]);
-                uint bv = I(read24(ba)); //I(memory[I(ba)]);
-                A=I24(av);
-                B=I24(bv);
-                dlog("IADD \tA=0x%06X[loc=0x%06X] B=0x%06X[loc=0x%06X] C=0x%06X[loc=0x%06X]\n",av,aa,bv,I(ba),av+bv,I(ca));
-                PC+=2;
-                write24(ca, I24((av+bv)&0xFFFFFF)); //memory[I(ca)] = I24((av+bv)&0xFFFFFF);
-                break;
-            }
-            case CPU_INA: {
-                uint sa = (b<<8) | c;
+        uchar la = 0;
 
-                write24(I24(sa), A);
-                A = I24(I(A) + 1);
+        uint at = 0;
+        uchar pt = 0;
 
-                dlog("INA  \tSA=0x%06X\n",sa);
+        uchar pswcf = 0;
 
-                break;
+        memcpy(ucr, ucrom+(opc*16), 16);
+
+        for (i=0;i<16;i++) {
+            dlog("ucop %02X\n",ucr[i]);
+
+            switch (ucr[i]&0xF) {
+                case UC_NOP:
+                    exit(0);
+                    break;
+                case UC_AW:
+                    if (la) A = idr;
+                    else A = idr & 0xFFFF;
+                    break;
+                case UC_BW:
+                    if (la) B = idr;
+                    else B = idr & 0xFFFF;
+                    break;
+                case UC_SMM:
+                    smm = idr & 0xF;
+                    break;
+                case UC_LA:
+                    la = 1;
+                    PC += 1;
+                    idr = load(PC);
+                    break;
+                case UC_AWI:
+                    if (la) at = idr;
+                    else at = idr & 0xFFFF;
+                    A = load(at);
+                    break;
+                case UC_BWI:
+                    if (la) at = idr;
+                    else at = idr & 0xFFFF;
+                    B = load(at);
+                    break;
+                case UC_PSWC:
+                    pt = psw&(idr & 0xFF);
+                    if (pt!=0) pswcf = 1;
+                    break;
+                case UC_PCW:
+                    PC = iar;
+                    break;
+                case UC_BCHK:
+                    if (la) at = idr;
+                    else at = idr & 0xFFFF;
+                    if (pswcf==1) PC = at;
+                    break;
+                case UC_ALU:
+                    _do_74181_arithmetic((ucr[i]&0xF0)>>4,idr, la);
+                    break;
+                case UC_ALUL:
+                    _do_74181_logical((ucr[i]&0xF0)>>4,idr, la);
+                    break;
+                case UC_IE:
+                    ierror0("Emulator cannot enable interrupts!\n","[EMULATOR]");
+                    break;
+                case UC_END:
+                    goto ucloopend;
+                default:
+                    printf("unknown ucode op: %02X\n",ucr[i]);
+                    ierror0("Ucode operation not implemented\n","[EMULATOR]");
+                    break;
             }
-            case CPU_INB: {
-                uint sa = (b<<8) | c;
 
-                write24(I24(sa), A);
-                B = I24(I(B) + 1);
-
-                dlog("INB  \tSA=0x%06X\n",sa);
-
-                break;
-            }
-            default: {
-                regdump();
-                alog("illegal instruction: 0x%06X\n",I(v));
-                exit(1);
+            if (i==15 && (ucr[i]&0xF) == 0) {
+                log("prevented infinite ucode loop, emulator exiting.\n");
+                exit(0);
             }
         }
 
-        //std::this_thread::sleep_for(std::chrono::milliseconds(250));
+        ucloopend:
 
-        if (!pcc) PC++;
-        else pcc=0;
+        PC++;
     }
+}
+
+void _do_74181_logical(uchar sel, uint idr, uchar la) {
+    uint sp = 0;
+    if (la) sp = idr;
+    else sp = idr & 0xFFFF;
+
+    switch (sel & 0xF) {
+        case 0:
+            A = ~A;
+            break;
+        case 1:
+            A = ~(A | B);
+            break;
+        case 2:
+            A = (~A) & B;
+            break;
+        case 3:
+            A = 0;
+            break;
+        case 4:
+            A = ~(A & B);
+            break;
+        case 5:
+            A = ~B;
+            break;
+        case 6:
+            A = A^B;
+            break;
+        case 7:
+            A = A & (~B);
+            break;
+        case 8:
+            A = (~A) | B;
+            break;
+        case 9:
+            A = ~(A ^ B);
+            break;
+        case 10:
+            A = B;
+            break;
+        case 11:
+            A = A&B;
+            break;
+        case 12:
+            A = 0xFFFFFF;
+            break;
+        case 13:
+            A = A | (~B);
+            break;
+        case 14:
+            A = A | B;
+            break;
+        case 15:
+            A = A;
+            break;
+    }
+
+    store(sp, A);
+}
+
+
+void _do_74181_arithmetic(uchar sel, uint idr, uchar la) {
+    uint sp = 0;
+    if (la) sp = idr;
+    else sp = idr & 0xFFFF;
+
+    switch (sel & 0xF) {
+        case 0:
+            A = A;
+            break;
+        case 1:
+            A = A + B;
+            break;
+        case 2:
+            A = A + (~B);
+            break;
+        case 3:
+            A = -1;
+            break;
+        case 4:
+            A = A + (A & (~B));
+            break;
+        case 5:
+            A = A + B + (A & (~B));
+            break;
+        case 6:
+            A = A - (B + 1);
+            break;
+        case 7:
+            A = (A & (~B)) - 1;
+            break;
+        case 8:
+            A = A + (A&B);
+            break;
+        case 9:
+            A = A + B;
+            break;
+        case 10:
+            A = (A + (~B)) + (A&B);
+            break;
+        case 11:
+            A = (A&B) - 1;
+            break;
+        case 12:
+            A = A + A;
+            break;
+        case 13:
+            A = (A|B) + A;
+            break;
+        case 14:
+            A = (A|(~B)) + A;
+            break;
+        case 15:
+            A = A-1;
+            break;
+    }
+
+    if (A>0x7FFFFF) {
+        setpswcarry();
+        A = 0x7FFFFF;
+    }
+
+    if (A==B)
+        setpswequals();
+
+    store(sp, A);
 }
