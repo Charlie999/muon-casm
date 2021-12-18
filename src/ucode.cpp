@@ -81,7 +81,7 @@ std::vector<unsigned char> ucassemble(const std::vector<std::string>& insns) {
                 ierror0("invalid insn number",l);
 
             curinsn = t;
-        } else if (i == UC_ALU || i == UC_ALUL || i == UC_SMM) {
+        } else if (i == UC_ALU || i == UC_ALUL) {
             if (ucount[curinsn] >= 16)
                 ierror0("too many uops",l);
 
