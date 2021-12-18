@@ -35,6 +35,9 @@ void setpswequals() {
 }
 
 uint load(uint addr) {
+    uchar smmr = (smm&0xF)<<17;
+    addr |= smmr;
+
     dlog("LOAD @0x%06X [0x%06X]\n",addr, memory[addr]);
     if (addr >= 0xFFFE00) {
         uint ucromaddr = addr-0xFFFE00;
@@ -44,6 +47,9 @@ uint load(uint addr) {
 }
 
 void store(uint addr, uint data) {
+    uchar smmr = (smm&0xF)<<17;
+    addr |= smmr;
+
     if (addr >= 0xFFFFFF) ierror0("Invalid memory write", "[EMULATOR=>store()]");
 
     dlog("STORE @0x%06X [0x%06X]\n",addr, data);
@@ -103,7 +109,7 @@ void emulate(const std::vector<std::string>& rmem, unsigned char* ucrom, const s
     uep = ep;
     ucra = ucrom;
     df = dumpfile;
-    printf("constructing memory...\n");
+    printf("constructing memor y...\n");
 
     int i = 0;
     for (i=0;i<rmem.size();i++) {
