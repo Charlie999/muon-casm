@@ -104,7 +104,7 @@ void emufinish(int code) {
 void _do_74181_logical(uchar sel, uint idr, uchar la);
 void _do_74181_arithmetic(uchar sel, uint idr, uchar la);
 
-void emulate(const std::vector<std::string>& rmem, unsigned char* ucrom, const std::string& dumpfile, bool dbg, bool ep) {
+void emulate(const std::vector<std::string>& rmem, unsigned char* ucrom, const std::string& dumpfile, int expectediters, bool dbg, bool ep) {
     udbg = dbg;
     uep = ep;
     ucra = ucrom;
@@ -119,6 +119,8 @@ void emulate(const std::vector<std::string>& rmem, unsigned char* ucrom, const s
     }
     dlog("populated words 0x%06X - 0x%06X\n",0,i-1);
 
+    uint iters = 0;
+
     while (hlt == 0) {
         uint idr = load(PC);
 
@@ -129,6 +131,7 @@ void emulate(const std::vector<std::string>& rmem, unsigned char* ucrom, const s
 
         uint at = 0;
         uchar pt = 0;
+        uchar jmp = 0;
 
         uchar pswcf = 0;
 
@@ -140,65 +143,82 @@ void emulate(const std::vector<std::string>& rmem, unsigned char* ucrom, const s
         }
 
         for (i=0;i<16;i++) {
-            dlog("ucop %02X\n",ucr[i]);
+            //dlog("ucop %02X\n",ucr[i]);
 
             switch (ucr[i]&0xF) {
                 case UC_NOP:
+                    dlog("uc nop\n");
                     break;
                 case UC_LD:
                     if (la) at = idr;
                     else at = idr & 0xFFFF;
-                    PC = load(at);
-                    dlog("set pc=0x%06X\n",PC);
+                    PC = at;
+                    dlog("uc ld set pc=0x%06X\n",PC);
+                    jmp=1;
                     break;
                 case UC_AW:
                     if (la) A = idr;
                     else A = idr & 0xFFFF;
+                    dlog("uc aw set a=0x%06X\n",A)
                     break;
                 case UC_BW:
                     if (la) B = idr;
                     else B = idr & 0xFFFF;
+                    dlog("uc bw set b=0x%06X\n",B)
                     break;
                 case UC_SMM:
                     smm = idr & 0xF;
+                    dlog("uc smm set smm=0x%01X\n",smm&0xF)
                     break;
                 case UC_LA:
                     la = 1;
                     PC += 1;
                     idr = load(PC);
+                    dlog("uc la set idr=0x%06X\n",idr)
                     break;
                 case UC_AWI:
                     if (la) at = idr;
                     else at = idr & 0xFFFF;
                     A = load(at);
+                    dlog("uc awi set a=0x%06X\n",A)
                     break;
                 case UC_BWI:
                     if (la) at = idr;
                     else at = idr & 0xFFFF;
                     B = load(at);
+                    dlog("uc bwi set b=0x%06X\n",B)
                     break;
                 case UC_PSWC:
                     pt = psw&(idr & 0xFF);
                     if (pt!=0) pswcf = 1;
+                    dlog("uc pswc psw=0x%02X set pswcf=%d\n",psw,pswcf);
                     break;
                 case UC_PCW:
                     PC = iar;
+                    jmp=1;
+                    dlog("uc pcw set pc=0x%06X\n",PC);
                     break;
                 case UC_BCHK:
                     if (la) at = idr;
                     else at = idr & 0xFFFF;
                     if (pswcf==1) PC = at;
+                    jmp=1;
+                    dlog("uc bchk b=%d set pc=0x%06X\n",pswcf,PC);
+                    pswcf=0;
                     break;
                 case UC_ALU:
                     _do_74181_arithmetic((ucr[i]&0xF0)>>4,idr, la);
+                    dlog("uc alu set a=0x%06X\n",A);
                     break;
                 case UC_ALUL:
                     _do_74181_logical((ucr[i]&0xF0)>>4,idr, la);
+                    dlog("uc alul set a=0x%06X\n",A);
                     break;
                 case UC_IE:
                     ierror0("Emulator cannot enable interrupts!\n","[EMULATOR]");
                     break;
                 case UC_END:
+                    dlog("uc end\n");
                     goto ucloopend;
                 default:
                     printf("unknown ucode op: %02X\n",ucr[i]);
@@ -214,7 +234,13 @@ void emulate(const std::vector<std::string>& rmem, unsigned char* ucrom, const s
 
         ucloopend:
 
-        PC++;
+        if (!jmp) PC++;
+
+        iters++;
+        if (iters > expectediters && expectediters > 0) {
+            log("exceeded expected iters, emulator exiting.\n");
+            emufinish(-1);
+        }
     }
 }
 
