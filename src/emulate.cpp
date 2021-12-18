@@ -109,7 +109,7 @@ void emulate(const std::vector<std::string>& rmem, unsigned char* ucrom, const s
     uep = ep;
     ucra = ucrom;
     df = dumpfile;
-    printf("constructing memor y...\n");
+    printf("constructing memory...\n");
 
     int i = 0;
     for (i=0;i<rmem.size();i++) {
@@ -134,11 +134,22 @@ void emulate(const std::vector<std::string>& rmem, unsigned char* ucrom, const s
 
         memcpy(ucr, ucrom+(opc*16), 16);
 
+        if (opc == 0xFF) {
+            dlog("hcf end\n");
+            emufinish(0);
+        }
+
         for (i=0;i<16;i++) {
             dlog("ucop %02X\n",ucr[i]);
 
             switch (ucr[i]&0xF) {
                 case UC_NOP:
+                    break;
+                case UC_LD:
+                    if (la) at = idr;
+                    else at = idr & 0xFFFF;
+                    PC = load(at);
+                    dlog("set pc=0x%06X\n",PC);
                     break;
                 case UC_AW:
                     if (la) A = idr;
