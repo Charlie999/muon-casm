@@ -39,8 +39,8 @@ uint load(uint addr) {
     addr |= smmr;
 
     dlog("LOAD @0x%06X [0x%06X]\n",addr, memory[addr]);
-    if (addr >= 0xFFFE00) {
-        uint ucromaddr = addr-0xFFFE00;
+    if (addr >= 0xFFF800) {
+        uint ucromaddr = addr-0xFFF800;
         return ucra[ucromaddr];
     }
     return memory[addr];
@@ -53,8 +53,8 @@ void store(uint addr, uint data) {
     if (addr >= 0xFFFFFF) ierror0("Invalid memory write", "[EMULATOR=>store()]");
 
     dlog("STORE @0x%06X [0x%06X]\n",addr, data);
-    if (addr >= 0xFFFE00) {
-        uint ucromaddr = addr-0xFFFE00;
+    if (addr >= 0xFFF800) {
+        uint ucromaddr = addr-0xFFF800;
         ucra[ucromaddr] = (data&0xFF);
         printf("WCS WRITE 0x%03X [0x%02X]\n",ucromaddr,ucra[ucromaddr]);
         return;
