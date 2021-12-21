@@ -10,6 +10,7 @@
 #define INSN_CPSW 5
 
 #define INSN_DW 6
+#define INSN_DS 7
 
 #define CPU_NOP 0
 #define CPU_JMP 1

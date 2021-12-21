@@ -43,7 +43,9 @@ int stoit(const std::string& opcr) {
         return INSN_CPSW;
     } else if (strcmp(opc, "dw")==0) {
         return INSN_DW;
-    } else {
+    } else if (strcmp(opc, "ds")==0) {
+        return INSN_DS;
+    }  else {
         printf("Unknown instruction [%s]\n",opc);
         exit(1);
     }
@@ -283,6 +285,23 @@ std::vector<unsigned char> assemble(const std::string& insnraw,bool movswap,std:
             ret.push_back((a&0xFF0000)>>16);
             ret.push_back((a&0xFF00)>>8);
             ret.push_back(a&0xFF);
+
+            break;
+        }
+        case INSN_DS: {
+            if (insn.size() < 2)
+                ierror0("invalid instruction format",insnraw);
+            if (insnraw.length() <= 3)
+                ierror0("invalid instruction format",insnraw);
+
+            std::string str(insnraw.c_str()+3);
+
+            int len = ((str.length()%3)>1?((str.length()/3)+1):(str.length()/3) + (str.length()%3)) * 3;
+            char sd[len];
+            memset(sd, 0, len);
+            memcpy(sd, str.c_str(), str.length());
+            for (int i=0;i<len;i++)
+                ret.push_back(sd[i]);
 
             break;
         }

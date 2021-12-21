@@ -1,4 +1,3 @@
-:1
-jmp {2}
-:2
-jmp {1}
+mov {msg} 0xF00000
+:msg
+ds 12345
