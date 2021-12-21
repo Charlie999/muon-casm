@@ -4,6 +4,8 @@
 #include <cstring>
 #include "insns.h"
 
+#define ENABLE_LABEL_ENGINE
+
 std::vector<std::string> split(const std::string& s, const std::string& delim) {
     std::vector<std::string> ret;
 
@@ -41,17 +43,74 @@ int stoit(const std::string& opcr) {
         return INSN_CPSW;
     } else if (strcmp(opc, "dw")==0) {
         return INSN_DW;
-    } else if (opc[0] == ':') {
-        return INSN_DW;
     } else {
         printf("Unknown instruction [%s]\n",opc);
         exit(1);
     }
 }
 
-unsigned int decodeint(std::string a) {
+bool isComma(char ch) { return ch==','; }
+
+#define uint unsigned int
+
+struct label {
+    char name[256]{};
+    uint ptr{};
+};
+
+struct labellookup {
+    char name[256]{};
+    uint ptr{};
+    uint mask{};
+};
+
+std::vector<struct label> labelptrs;
+std::vector<struct labellookup> labelqueue;
+
+label* getlabel(const std::string& n) {
+    for (const struct label& lbl : labelptrs) {
+        if (strcmp(lbl.name, n.c_str()) == 0) {
+            auto *lblret = (struct label*)malloc(sizeof(struct label));
+            strcpy(lblret->name, lbl.name);
+            lblret->ptr = lbl.ptr;
+            return lblret;
+        }
+    }
+    return nullptr;
+}
+
+#define lelog(...) {printf("[labelengine] "); printf(__VA_ARGS__);}
+
+unsigned int decodeint(std::string a, uint _ptr, uint imask, bool lookuplabels, bool enablelabels = true) {
     std::string s;
     if (a.length()>=2) {
+#ifdef ENABLE_LABEL_ENGINE
+        std::string t(a);
+        t.erase(std::remove(t.begin(),t.end(),','), t.end());
+        if (t.c_str()[0] == '{' && t.c_str()[t.length()-1] == '}' && enablelabels) {
+            std::string lblname(t.c_str()+1);
+            lblname.pop_back();
+            lelog("get label %s\n",lblname.c_str());
+            label *lbl = getlabel(lblname);
+            if (!lbl) {
+                lelog("label %s not found\n",lblname.c_str());
+                if (!lookuplabels)
+                    return 0xFFFFFFE0;
+                lelog("label lookup queued for %s\n",lblname.c_str());
+                labellookup llk;
+                strncpy(llk.name,lblname.c_str(),256);
+                llk.ptr = _ptr;
+                llk.mask = imask;
+                labelqueue.push_back(llk);
+                return 0;
+            }
+            lelog("got label ptr for %s: 0x%06X\n",lblname.c_str(),lbl->ptr);
+            uint ptr = lbl->ptr;
+            free(lbl);
+            return ptr;
+        }
+#endif
+
         char sr[a.length() - 2];
         sr[a.length() - 2] = 0;
         memcpy(sr, a.c_str() + 2, a.length() - 2);
@@ -73,21 +132,52 @@ void ierror1(const std::string& reason, const std::string& operand) {
     exit(1);
 }
 
-#define uint unsigned int
+uint ptr = 0;
 
-std::vector<unsigned char> assemble(const std::string& insnraw,bool movswap) {
+std::vector<unsigned char> assemble(const std::string& insnraw,bool movswap,std::vector<unsigned int>* outdata) {
     std::vector<std::string> insn = split(insnraw," ");
+    std::vector<unsigned char> ret;
+
+#ifdef ENABLE_LABEL_ENGINE
+    if (insnraw.c_str()[0]==':') {
+        std::string lblname(insnraw.c_str()+1);
+        lelog("label: %s at ptr=0x%06X\n",lblname.c_str(),ptr);
+        label lbl;
+        strncpy(lbl.name, std::string(lblname).c_str(), 256);
+        lbl.ptr = ptr;
+        labelptrs.push_back(lbl);
+
+        lelog("running lookups for label %s\n",lbl.name);
+        for (auto llk=labelqueue.begin(); llk!=labelqueue.end();) {
+            if (strncmp(llk->name, lbl.name, 256) == 0) {
+                label *llkb = getlabel(std::string(llk->name));
+                if (!llkb) {
+                    lelog("warning: unknown label %s\n", llk->name);
+                    continue;
+                }
+
+                lelog("applying lookup at insn %s [ptr=0x%X, mask=0x%06X, np=0x%06X]\n", insnraw.c_str(), llk->ptr,
+                       llk->mask, llkb->ptr);
+                (*outdata)[llk->ptr] = outdata->at(llk->ptr) | (llkb->ptr & llk->mask);
+
+                labelqueue.erase(llk);
+            } else {
+                llk++;
+            }
+        }
+
+        return ret;
+    }
+#endif
 
     int itype = stoit(insn.at(0));
-
-    std::vector<unsigned char> ret;
 
     switch (itype) {
         case INSN_MOV: {
             if (insn.size() != 3)
                 ierror0("invalid instruction format",insnraw);
-            uint a = decodeint(insn.at(1));
-            uint b = decodeint(insn.at(2));
+            uint a = decodeint(insn.at(1),ptr,0x00FFFF,true);
+            uint b = decodeint(insn.at(2),ptr+1, 0xFFFFFF,true);
             if (movswap) {
                 uint c = a;
                 a = b;
@@ -119,9 +209,9 @@ std::vector<unsigned char> assemble(const std::string& insnraw,bool movswap) {
         case INSN_ADD: {
             if (insn.size() != 4)
                 ierror0("invalid instruction format",insnraw);
-            uint a = decodeint(insn.at(1));
-            uint b = decodeint(insn.at(2));
-            uint c = decodeint(insn.at(3));
+            uint a = decodeint(insn.at(1),ptr,0x00FFFF,true);
+            uint b = decodeint(insn.at(2),ptr+1, 0xFFFFFF,true);
+            uint c = decodeint(insn.at(3),ptr+1, 0xFFFFFF,true);
 
             ret.push_back(CPU_IADD);
             ret.push_back((a&0xFF00)>>8);
@@ -140,7 +230,7 @@ std::vector<unsigned char> assemble(const std::string& insnraw,bool movswap) {
         case INSN_INA: {
             if (insn.size() != 2)
                 ierror0("invalid instruction format",insnraw);
-            uint a = decodeint(insn.at(1));
+            uint a = decodeint(insn.at(1),ptr,0x00FFFF,true);
 
             ret.push_back(CPU_INA);
             ret.push_back((a&0xFF00)>>8);
@@ -151,7 +241,7 @@ std::vector<unsigned char> assemble(const std::string& insnraw,bool movswap) {
         case INSN_INB: {
             if (insn.size() != 2)
                 ierror0("invalid instruction format",insnraw);
-            uint a = decodeint(insn.at(1));
+            uint a = decodeint(insn.at(1),ptr,0x00FFFF,true);
 
             ret.push_back(CPU_INB);
             ret.push_back((a&0xFF00)>>8);
@@ -162,12 +252,14 @@ std::vector<unsigned char> assemble(const std::string& insnraw,bool movswap) {
         case INSN_JMP: {
             if (insn.size() != 2)
                 ierror0("invalid instruction format",insnraw);
-            uint a = decodeint(insn.at(1));
+            uint a = decodeint(insn.at(1),ptr,0x00FFFF,false);
             if (a <= 0xFFFF) {
+                a = decodeint(insn.at(1),ptr,0x00FFFF,true, true);
                 ret.push_back(CPU_JMP);
                 ret.push_back((a&0xFF00)>>8);
                 ret.push_back(a&0xFF);
             } else {
+                a = decodeint(insn.at(1),ptr+1,0xFFFFFF,true, true);
                 ret.push_back(CPU_EJMP);
                 ret.push_back(0);
                 ret.push_back(0);
@@ -186,7 +278,7 @@ std::vector<unsigned char> assemble(const std::string& insnraw,bool movswap) {
         case INSN_DW: {
             if (insn.size() != 2)
                 ierror0("invalid instruction format",insnraw);
-            uint a = decodeint(insn.at(1));
+            uint a = decodeint(insn.at(1), ptr, 0xFFFFFF, true);
 
             ret.push_back((a&0xFF0000)>>16);
             ret.push_back((a&0xFF00)>>8);
@@ -200,5 +292,29 @@ std::vector<unsigned char> assemble(const std::string& insnraw,bool movswap) {
         }
     }
 
+    ptr += (ret.size()/3);
+
     return ret;
+}
+
+void assemble_resolve_final(std::vector<unsigned int>* outdata) {
+#ifdef ENABLE_LABEL_ENGINE
+    lelog("resolving all remaining labels...\n");
+
+    for (auto llk=labelqueue.begin(); llk!=labelqueue.end();) {
+
+        label* llkb = getlabel(std::string(llk->name));
+        if (!llkb) {
+            lelog("error: unknown label \"%s\" on final pass\n",llk->name);
+            exit(-1);
+        }
+
+        lelog("applying final lookup [ptr=0x%X, mask=0x%06X, np=0x%06X]\n",llk->ptr,llk->mask,llkb->ptr);
+        (*outdata)[llk->ptr] = outdata->at(llk->ptr) | (llkb->ptr & llk->mask);
+
+        labelqueue.erase(llk);
+    }
+
+    lelog("all labels resolved.\n");
+#endif
 }

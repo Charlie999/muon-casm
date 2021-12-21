@@ -130,7 +130,7 @@ int main(int argc, char** argv) {
 
             for (int i = 0; i < indata.size(); i++) {
                 std::string iline = trim(indata.at(i));
-                if (iline.length() <= 3 || iline.c_str()[0] == ';') {
+                if (iline.length() < 2 || iline.c_str()[0] == ';') {
                     errs++;
                     indata.erase(indata.begin() + i);
                 }
@@ -143,7 +143,7 @@ int main(int argc, char** argv) {
 
         std::vector<unsigned int> out;
         for (auto &i : indata) {
-            std::vector<unsigned char> t = assemble(i,movswap);
+            std::vector<unsigned char> t = assemble(i, movswap, &out);
             int q = 0;
             for (unsigned char &j : t) {
                 if ((q % 3) == 0) {
@@ -159,6 +159,8 @@ int main(int argc, char** argv) {
                 q++;
             }
         }
+        assemble_resolve_final(&out);
+
 
         if (omode == HEX && ofile.length() == 0) {
             printf("v2.0 raw\n");

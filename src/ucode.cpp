@@ -75,7 +75,7 @@ std::vector<unsigned char> ucassemble(const std::vector<std::string>& insns) {
 
             std::string n;
             n.append(l.c_str()+1);
-            uint t = decodeint(n);
+            uint t = decodeint(n, 0, 0, false, false);
 
             if (t > 256)
                 ierror0("invalid insn number",l);
@@ -88,7 +88,7 @@ std::vector<unsigned char> ucassemble(const std::vector<std::string>& insns) {
             if (parts.size()!=2)
                 ierror0("invalid ALU uop format",l);
 
-            ucrom[(curinsn*16) + ucount[curinsn]] = i | ((decodeint(parts.at(1))&0xF)<<4);
+            ucrom[(curinsn*16) + ucount[curinsn]] = i | ((decodeint(parts.at(1), 0, 0, false, false) & 0xF) << 4);
             ucount[curinsn]++;
         } else {
             if (ucount[curinsn] >= 16)
