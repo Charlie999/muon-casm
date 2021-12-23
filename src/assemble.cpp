@@ -39,8 +39,26 @@ int stoit(const std::string& opcr) {
         return INSN_INB;
     } else if (strcmp(opc, "jmp")==0) {
         return INSN_JMP;
-    } else if (strcmp(opc, "cpsw")==0) {
-        return INSN_CPSW;
+    } else if (strcmp(opc, "lda")==0) {
+        return INSN_LDA;
+    } else if (strcmp(opc, "ldb")==0) {
+        return INSN_LDB;
+    } else if (strcmp(opc, "ldbi")==0) {
+        return INSN_LDBI;
+    } else if (strcmp(opc, "ldai")==0) {
+        return INSN_LDAI;
+    } else if (strcmp(opc, "ota")==0) {
+        return INSN_OTA;
+    } else if (strcmp(opc, "otb")==0) {
+        return INSN_OTB;
+    } else if (strcmp(opc, "ldaptr")==0) {
+        return INSN_LDAPTR;
+    } else if (strcmp(opc, "otaptr")==0) {
+        return INSN_OTAPTR;
+    } else if (strcmp(opc, "dec")==0) {
+        return INSN_DEC;
+    } else if (strcmp(opc, "brch")==0) {
+        return INSN_BRCH;
     } else if (strcmp(opc, "dw")==0) {
         return INSN_DW;
     } else if (strcmp(opc, "ds")==0) {
@@ -209,23 +227,13 @@ std::vector<unsigned char> assemble(const std::string& insnraw,bool movswap,std:
             break;
         }
         case INSN_ADD: {
-            if (insn.size() != 4)
+            if (insn.size() != 2)
                 ierror0("invalid instruction format",insnraw);
             uint a = decodeint(insn.at(1),ptr,0x00FFFF,true);
-            uint b = decodeint(insn.at(2),ptr+1, 0xFFFFFF,true);
-            uint c = decodeint(insn.at(3),ptr+1, 0xFFFFFF,true);
 
-            ret.push_back(CPU_IADD);
+            ret.push_back(CPU_ADD);
             ret.push_back((a&0xFF00)>>8);
             ret.push_back(a&0xFF);
-
-            ret.push_back((b&0xFF0000)>>16);
-            ret.push_back((b&0xFF00)>>8);
-            ret.push_back(b&0xFF);
-
-            ret.push_back((c&0xFF0000)>>16);
-            ret.push_back((c&0xFF00)>>8);
-            ret.push_back(c&0xFF);
 
             break;
         }
@@ -305,6 +313,152 @@ std::vector<unsigned char> assemble(const std::string& insnraw,bool movswap,std:
 
             break;
         }
+        case INSN_LDA: {
+            if (insn.size() != 2)
+                ierror0("invalid instruction format",insnraw);
+            uint a = decodeint(insn.at(1),ptr,0x00FFFF,true, true);
+
+            ret.push_back(CPU_LDA);
+            ret.push_back((a&0xFF00)>>8);
+            ret.push_back(a&0xFF);
+
+            break;
+        }
+        case INSN_LDB: {
+            if (insn.size() != 2)
+                ierror0("invalid instruction format",insnraw);
+            uint a = decodeint(insn.at(1),ptr,0x00FFFF,true, true);
+
+            ret.push_back(CPU_LDB);
+            ret.push_back((a&0xFF00)>>8);
+            ret.push_back(a&0xFF);
+
+            break;
+        }
+        case INSN_LDAI: {
+            if (insn.size() != 2)
+                ierror0("invalid instruction format",insnraw);
+            uint a = decodeint(insn.at(1),ptr,0x00FFFF,true, true);
+
+            ret.push_back(CPU_LDAI);
+            ret.push_back((a&0xFF00)>>8);
+            ret.push_back(a&0xFF);
+
+            break;
+        }
+        case INSN_LDBI: {
+            if (insn.size() != 2)
+                ierror0("invalid instruction format",insnraw);
+            uint a = decodeint(insn.at(1),ptr,0x00FFFF,true, true);
+
+            ret.push_back(CPU_LDBI);
+            ret.push_back((a&0xFF00)>>8);
+            ret.push_back(a&0xFF);
+
+            break;
+        }
+        case INSN_OTA: {
+            if (insn.size() != 2)
+                ierror0("invalid instruction format",insnraw);
+            uint a = decodeint(insn.at(1),ptr,0x00FFFF,false);
+            if (a <= 0xFFFF) {
+                a = decodeint(insn.at(1),ptr,0x00FFFF,true, true);
+                ret.push_back(CPU_OTA);
+                ret.push_back((a&0xFF00)>>8);
+                ret.push_back(a&0xFF);
+            } else {
+                a = decodeint(insn.at(1),ptr+1,0xFFFFFF,true, true);
+                ret.push_back(CPU_EOTA);
+                ret.push_back(0);
+                ret.push_back(0);
+
+                ret.push_back((a&0xFF0000)>>16);
+                ret.push_back((a&0xFF00)>>8);
+                ret.push_back(a&0xFF);
+            }
+
+            break;
+
+        }
+        case INSN_OTB: {
+            if (insn.size() != 2)
+                ierror0("invalid instruction format",insnraw);
+            uint a = decodeint(insn.at(1),ptr,0x00FFFF,true, true);
+
+            ret.push_back(CPU_OTB);
+            ret.push_back((a&0xFF00)>>8);
+            ret.push_back(a&0xFF);
+
+            break;
+        }
+        case INSN_LDAPTR: {
+            if (insn.size() != 2)
+                ierror0("invalid instruction format",insnraw);
+            uint a = decodeint(insn.at(1),ptr,0x00FFFF,true, true);
+
+            ret.push_back(CPU_LDAPTR);
+            ret.push_back((a&0xFF00)>>8);
+            ret.push_back(a&0xFF);
+
+            uint sp = ptr+2;
+            ret.push_back((sp&0xFF0000)>>16);
+            ret.push_back((sp&0xFF00)>>8);
+            ret.push_back(sp&0xFF);
+
+            ret.push_back(0);
+            ret.push_back(0);
+            ret.push_back(0);
+
+            break;
+        }
+        case INSN_OTAPTR: {
+            if (insn.size() != 2)
+                ierror0("invalid instruction format",insnraw);
+            uint a = decodeint(insn.at(1),ptr,0x00FFFF,true, true);
+
+            ret.push_back(CPU_OTAPTR);
+            ret.push_back((a&0xFF00)>>8);
+            ret.push_back(a&0xFF);
+
+            uint sp = ptr+2;
+            ret.push_back((sp&0xFF0000)>>16);
+            ret.push_back((sp&0xFF00)>>8);
+            ret.push_back(sp&0xFF);
+
+            ret.push_back(0);
+            ret.push_back(0);
+            ret.push_back(0);
+
+            break;
+        }
+        case INSN_DEC: {
+            if (insn.size() != 2)
+                ierror0("invalid instruction format",insnraw);
+            uint a = decodeint(insn.at(1),ptr,0x00FFFF,true, true);
+
+            ret.push_back(CPU_DEC);
+            ret.push_back((a&0xFF00)>>8);
+            ret.push_back(a&0xFF);
+
+            break;
+        }
+        case INSN_BRCH: {
+            if (insn.size() != 3)
+                ierror0("invalid instruction format",insnraw);
+
+            uint a = decodeint(insn.at(1),ptr,0x00FFFF,true, true);
+
+            ret.push_back(CPU_BRCH);
+            ret.push_back((a&0xFF00)>>8);
+            ret.push_back(a&0xFF);
+
+            uint addr = decodeint(insn.at(2), ptr + 1, 0xFFFFFF, true, true);
+            ret.push_back((addr & 0xFF0000) >> 16);
+            ret.push_back((addr & 0xFF00) >> 8);
+            ret.push_back(addr & 0xFF);
+
+            break;
+        }
         default: {
             printf("Unknown itype %d\n",itype);
             exit(1);
@@ -319,6 +473,10 @@ std::vector<unsigned char> assemble(const std::string& insnraw,bool movswap,std:
 void assemble_resolve_final(std::vector<unsigned int>* outdata) {
 #ifdef ENABLE_LABEL_ENGINE
     lelog("resolving all remaining labels...\n");
+
+    lelog("labels: \n")
+    for (auto lbl : labelptrs)
+        lelog(" => %s\n",lbl.name);
 
     for (auto llk=labelqueue.begin(); llk!=labelqueue.end();) {
 

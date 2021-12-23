@@ -62,7 +62,13 @@ void store(uint addr, uint data) {
         uchar a = (data&0xFF0000)>>16;
         uchar b = (data&0xFF00)>>8;
         uchar c = (data&0xFF);
-        printf("TERMINAL_WRITE: %c%c%c\n",a,b,c);
+        if (uep)
+            printf("%c%c%c",a,b,c);
+        else
+            printf("TERMINAL_WRITE: %c%c%c\n",a,b,c);
+        return;
+    } else if (addr == 0xF00001) {
+        printf("TERMINAL_WRITE_INT: 0x%06X\n",data);
         return;
     }
     memory[addr] = data;
@@ -101,8 +107,8 @@ void emufinish(int code) {
     exit(code);
 }
 
-void _do_74181_logical(uchar sel, uint idr, uchar la);
-void _do_74181_arithmetic(uchar sel, uint idr, uchar la);
+unsigned int _do_74181_logical(uchar sel, uint idr, uchar la);
+unsigned int _do_74181_arithmetic(uchar sel, uint idr, uchar la);
 
 void emulate(const std::vector<std::string>& rmem, unsigned char* ucrom, const std::string& dumpfile, int expectediters, bool dbg, bool ep) {
     udbg = dbg;
@@ -180,7 +186,7 @@ void emulate(const std::vector<std::string>& rmem, unsigned char* ucrom, const s
                     if (la) at = idr;
                     else at = idr & 0xFFFF;
                     A = load(at);
-                    dlog("uc awi set a=0x%06X\n",A)
+                    dlog("uc awi set a=0x%06X [@0x%06X]\n",A,at)
                     break;
                 case UC_BWI:
                     if (la) at = idr;
@@ -201,18 +207,25 @@ void emulate(const std::vector<std::string>& rmem, unsigned char* ucrom, const s
                 case UC_BCHK:
                     if (la) at = idr;
                     else at = idr & 0xFFFF;
-                    if (pswcf==1) PC = at;
-                    jmp=1;
-                    dlog("uc bchk b=%d set pc=0x%06X\n",pswcf,PC);
+                    if (pswcf==1) {
+                        PC = at;
+                        jmp = 1;
+                        dlog("uc bchk b=%d set pc=0x%06X\n", pswcf, PC);
+                    } else {
+                        jmp = 0;
+                        dlog("uc bchk b=%d no branch\n",pswcf);
+                    }
                     pswcf=0;
                     break;
                 case UC_ALU:
-                    _do_74181_arithmetic((ucr[i]&0xF0)>>4,idr, la);
-                    dlog("uc alu set a=0x%06X\n",A);
+                    psw &= 0b11111100;
+                    at = _do_74181_arithmetic((ucr[i]&0xF0)>>4,idr, la);
+                    dlog("uc alu opc=%d A=0x%06X B=0x%06X set r=0x%06X\n",(ucr[i]&0xF0)>>4,A,B,at);
                     break;
                 case UC_ALUL:
-                    _do_74181_logical((ucr[i]&0xF0)>>4,idr, la);
-                    dlog("uc alul set a=0x%06X\n",A);
+                    psw &= 0b11111100;
+                    at = _do_74181_logical((ucr[i]&0xF0)>>4,idr, la);
+                    dlog("uc alul opc=%d A=0x%06X B=0x%06X  set r=0x%06X\n",(ucr[i]&0xF0)>>4,A,B,at);
                     break;
                 case UC_IE:
                     ierror0("Emulator cannot enable interrupts!\n","[EMULATOR]");
@@ -244,129 +257,138 @@ void emulate(const std::vector<std::string>& rmem, unsigned char* ucrom, const s
     }
 }
 
-void _do_74181_logical(uchar sel, uint idr, uchar la) {
+uint _do_74181_logical(uchar sel, uint idr, uchar la) {
     uint sp = 0;
     if (la) sp = idr;
     else sp = idr & 0xFFFF;
 
-    switch (sel & 0xF) {
-        case 0:
-            A = ~A;
-            break;
-        case 1:
-            A = ~(A | B);
-            break;
-        case 2:
-            A = (~A) & B;
-            break;
-        case 3:
-            A = 0;
-            break;
-        case 4:
-            A = ~(A & B);
-            break;
-        case 5:
-            A = ~B;
-            break;
-        case 6:
-            A = A^B;
-            break;
-        case 7:
-            A = A & (~B);
-            break;
-        case 8:
-            A = (~A) | B;
-            break;
-        case 9:
-            A = ~(A ^ B);
-            break;
-        case 10:
-            A = B;
-            break;
-        case 11:
-            A = A&B;
-            break;
-        case 12:
-            A = 0xFFFFFF;
-            break;
-        case 13:
-            A = A | (~B);
-            break;
-        case 14:
-            A = A | B;
-            break;
-        case 15:
-            A = A;
-            break;
-    }
-
-    store(sp, A);
-}
-
-
-void _do_74181_arithmetic(uchar sel, uint idr, uchar la) {
-    uint sp = 0;
-    if (la) sp = idr;
-    else sp = idr & 0xFFFF;
+    uint res = 0;
 
     switch (sel & 0xF) {
         case 0:
-            A = A;
+            res = ~A;
             break;
         case 1:
-            A = A + B;
+            res = ~(A | B);
             break;
         case 2:
-            A = A + (~B);
+            res = (~A) & B;
             break;
         case 3:
-            A = -1;
+            res = 0;
             break;
         case 4:
-            A = A + (A & (~B));
+            res = ~(A & B);
             break;
         case 5:
-            A = A + B + (A & (~B));
+            res = ~B;
             break;
         case 6:
-            A = A - (B + 1);
+            res = A^B;
             break;
         case 7:
-            A = (A & (~B)) - 1;
+            res = A & (~B);
             break;
         case 8:
-            A = A + (A&B);
+            res = (~A) | B;
             break;
         case 9:
-            A = A + B;
+            res = ~(A ^ B);
             break;
         case 10:
-            A = (A + (~B)) + (A&B);
+            res = B;
             break;
         case 11:
-            A = (A&B) - 1;
+            res = A&B;
             break;
         case 12:
-            A = A + A;
+            res = 0xFFFFFF;
             break;
         case 13:
-            A = (A|B) + A;
+            res = A | (~B);
             break;
         case 14:
-            A = (A|(~B)) + A;
+            res = A | B;
             break;
         case 15:
-            A = A-1;
+            res = A;
             break;
-    }
-
-    if (A>0x7FFFFF) {
-        setpswcarry();
-        A = 0x7FFFFF;
     }
 
     if (A==B)
         setpswequals();
 
-    store(sp, A);
+    store(sp, res);
+    return res;
+}
+
+
+uint _do_74181_arithmetic(uchar sel, uint idr, uchar la) {
+    uint sp = 0;
+    if (la) sp = idr;
+    else sp = idr & 0xFFFF;
+
+    uint res = 0;
+
+    switch (sel & 0xF) {
+        case 0:
+            res = A;
+            break;
+        case 1:
+            res = A + B;
+            break;
+        case 2:
+            res = A + (~B);
+            break;
+        case 3:
+            res = -1;
+            break;
+        case 4:
+            res = A + (A & (~B));
+            break;
+        case 5:
+            res = A + B + (A & (~B));
+            break;
+        case 6:
+            res = A - (B + 1);
+            break;
+        case 7:
+            res = (A & (~B)) - 1;
+            break;
+        case 8:
+            res = A + (A&B);
+            break;
+        case 9:
+            res = A + B;
+            break;
+        case 10:
+            res = (A + (~B)) + (A&B);
+            break;
+        case 11:
+            res = (A&B) - 1;
+            break;
+        case 12:
+            res = A + A;
+            break;
+        case 13:
+            res = (A|B) + A;
+            break;
+        case 14:
+            res = (A|(~B)) + A;
+            break;
+        case 15:
+            res = A-1;
+            break;
+    }
+
+    if (res>0x7FFFFF) {
+        setpswcarry();
+        res = 0x7FFFFF;
+    }
+
+    if (A==B)
+        setpswequals();
+
+    store(sp, res);
+    return res;
 }
