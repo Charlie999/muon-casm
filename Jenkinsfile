@@ -8,6 +8,10 @@ node("windows-1") {
       archiveArtifacts artifacts: 'casm.exe', fingerprint: true
       deleteDir()
     }
+    
+    withCredentials([string(credentialsId: 'muon-discord-webhook', variable: 'DISCORD_URL')]) {
+     discordSend description: "Build complete", footer: "windows", link: "$BUILD_URL", result: currentBuild.currentResult, title: JOB_NAME, webhookURL: DISCORD_URL
+    }
   }
 }
 node("master") {
@@ -18,6 +22,10 @@ node("master") {
       sh 'make'
       archiveArtifacts artifacts: 'casm-static*', fingerprint: true
       deleteDir()
+    }
+    
+    withCredentials([string(credentialsId: 'muon-discord-webhook', variable: 'DISCORD_URL')]) {
+     discordSend description: "Build complete", footer: "linux", link: "$BUILD_URL", result: currentBuild.currentResult, title: JOB_NAME, webhookURL: DISCORD_URL
     }
   }
 }
