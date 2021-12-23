@@ -9,11 +9,9 @@ node("windows-1") {
       deleteDir()
     }
     
-    environment {
-     DISCORD_URL = credentials("muon-discord-webhook")
+    withCredentials([string(credentialsId: 'muon-discord-webhook', variable: 'DISCORD_URL')]) {
+     discordSend description: "Build complete", footer: "windows", link: "$BUILD_URL", result: currentBuild.currentResult, title: JOB_NAME, webhookURL: DISCORD_URL
     }
-    
-    discordSend description: "Build complete", footer: "windows", link: "$BUILD_URL", result: currentBuild.currentResult, title: JOB_NAME, webhookURL: DISCORD_URL
   }
 }
 node("master") {
@@ -26,10 +24,8 @@ node("master") {
       deleteDir()
     }
     
-    environment {
-     DISCORD_URL = credentials("muon-discord-webhook")
+    withCredentials([string(credentialsId: 'muon-discord-webhook', variable: 'DISCORD_URL')]) {
+     discordSend description: "Build complete", footer: "linux", link: "$BUILD_URL", result: currentBuild.currentResult, title: JOB_NAME, webhookURL: DISCORD_URL
     }
-    
-    discordSend description: "Build complete", footer: "linux", link: "$BUILD_URL", result: currentBuild.currentResult, title: JOB_NAME, webhookURL: DISCORD_URL
   }
 }
