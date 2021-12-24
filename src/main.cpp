@@ -74,6 +74,7 @@ int main(int argc, char** argv) {
             ("ucrom","ucode ROM for emulation", cxxopts::value<std::string>())
             ("coredump","(optional) save a memory dump from the emulator upon exit", cxxopts::value<std::string>())
             ("expectediters","stop the emulator (with an error) to prevent infinite loops", cxxopts::value<int>())
+            ("controlflow","dump the control flow for a program in the emulator")
             ("ucodesplit","split ucode into lower and upper 2K (this file is the upper 2K)", cxxopts::value<std::string>());
 
     auto argsresult = options.parse(argc, argv);
@@ -239,7 +240,7 @@ int main(int argc, char** argv) {
         int maxiters = 0;
         if (argsresult.count("expectediters"))
             maxiters = argsresult["expectediters"].as<int>();
-        emulate(indata, ucrom, cdf, maxiters, argsresult.count("debug"), argsresult.count("emuprint"));
+        emulate(indata, ucrom, cdf, maxiters, argsresult.count("debug"), argsresult.count("emuprint"), argsresult.count("controlflow"));
 
         return 0;
     } else if (mode == UCODE) {

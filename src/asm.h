@@ -4,7 +4,7 @@
 
 std::vector<unsigned char> assemble(const std::string&,bool,std::vector<unsigned int>*);
 std::vector<unsigned char> ucassemble(const std::vector<std::string>&);
-void emulate(const std::vector<std::string>&, unsigned char*, const std::string&, int, bool, bool);
+void emulate(const std::vector<std::string>&, unsigned char*, const std::string&, int, bool, bool, bool);
 
 void assemble_resolve_final(std::vector<unsigned int>*);
 

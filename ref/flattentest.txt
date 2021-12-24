@@ -1,2729 +1,420 @@
-;; BFCODE= +++++++++++>+>>>>++++++++++++++++++++++++++++++++++++++++++++>++++++++++++++++++++++++++++++++<<<<<<[>[>>>>>>+>+<<<<<<<-]>>>>>>>[<<<<<<<+>>>>>>>-]<[>++++++++++[-<-[>>+>+<<<-]>>>[<<<+>>>-]+<[>[-]<[-]]>[<<[>>>+<<<-]>>[-]]<<]>>>[>>+>+<<<-]>>>[<<<+>>>-]+<[>[-]<[-]]>[<<+>>[-]]<<<<<<<]>>>>>[++++++++++++++++++++++++++++++++++++++++++++++++.[-]]++++++++++<[->-<]>++++++++++++++++++++++++++++++++++++++++++++++++.[-]<<<<<<<<<<<<[>>>+>+<<<<-]>>>>[<<<<+>>>>-]<-[>>.>.<<<[-]]<<[>>+>+<<<-]>>>[<<<+>>>-]<<[<+>-]>[<+>-]<<<-]
-;; START
 dw 0
-jmp {_start}
-:_bfmemory
-dw 0x200000
-:_start
-ldai {_bfmemory}
-ota 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=[
-:loop1_100
-ldaptr 0xFFFC
+;; start
+:start
+ldai {na}
+ldbi {nb}
+add {scratch}
+ldai {scratch}
+ota {nr}
+jmp {printnr}
+:printnrdone
+mov {nb} {na}
+mov {nr} {nb}
+ldai {nc}
+ldb 1
+add {nc}
+ldbi {ctrmax}
+add {scratch}
+brch 2 {end}
+jmp {start}
+:end
+dw 0xff0000
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+:printnr
+mov {hexstart} 0xF00000
+
+;; digit 1
+ldai {nr}
+ldb 0x00000F
+and {d1}
+lda {hexalpha}
+ldbi {d1}
+add {hexptr}
+ldaptr {hexptr}
+ota {d1s}
+
+;; digit 2
+ldai {nr}
+ldb 0x0000F0
+and {d2}
+
+lda 0
+ota {ctr2}
+:d2shrloop
+mov {d2} {shrbuf}
+lda {d2shrend}
+ota {shrend}
+jmp {shr}
+:d2shrend
+mov {shrout} {d2}
+;;
+ldai {ctr2}
+ldb 1
+add {ctr2}
+ldb 3
+add {scratch}
+brch 2 {d2shrlpend}
+jmp {d2shrloop}
+:d2shrlpend
+
+lda {hexalpha}
+ldbi {d2}
+add {hexptr}
+ldaptr {hexptr}
+ota {d2s}
+
+;; digit 3
+ldai {nr}
+ldb 0x000F00
+and {d3}
+
+lda 0
+ota {ctr2}
+:d3shrloop
+mov {d3} {shrbuf}
+lda {d3shrend}
+ota {shrend}
+jmp {shr}
+:d3shrend
+mov {shrout} {d3}
+;;
+ldai {ctr2}
+ldb 1
+add {ctr2}
+ldb 7
+add {scratch}
+brch 2 {d3shrlpend}
+jmp {d3shrloop}
+:d3shrlpend
+
+lda {hexalpha}
+ldbi {d3}
+add {hexptr}
+ldaptr {hexptr}
+ota {d3s}
+
+;; digit 4
+ldai {nr}
+ldb 0x00F000
+and {d4}
+
+lda 0
+ota {ctr2}
+:d4shrloop
+mov {d4} {shrbuf}
+lda {d4shrend}
+ota {shrend}
+jmp {shr}
+:d4shrend
+mov {shrout} {d4}
+;;
+ldai {ctr2}
+ldb 1
+add {ctr2}
+ldb 11
+add {scratch}
+brch 2 {d4shrlpend}
+jmp {d4shrloop}
+:d4shrlpend
+
+lda {hexalpha}
+ldbi {d4}
+add {hexptr}
+ldaptr {hexptr}
+ota {d4s}
+
+;; digit 5
+ldai {nr}
+eldb 0x0F0000
+and {d5}
+
+lda 0
+ota {ctr2}
+:d5shrloop
+mov {d5} {shrbuf}
+lda {d5shrend}
+ota {shrend}
+jmp {shr}
+:d5shrend
+mov {shrout} {d5}
+;;
+ldai {ctr2}
+ldb 1
+add {ctr2}
+ldb 15
+add {scratch}
+brch 2 {d5shrlpend}
+jmp {d5shrloop}
+:d5shrlpend
+
+lda {hexalpha}
+ldbi {d5}
+add {hexptr}
+ldaptr {hexptr}
+ota {d5s}
+
+;; digit 6
+ldai {nr}
+eldb 0xF00000
+and {d6}
+
+lda 0
+ota {ctr2}
+:d6shrloop
+mov {d6} {shrbuf}
+lda {d6shrend}
+ota {shrend}
+jmp {shr}
+:d6shrend
+mov {shrout} {d6}
+;;
+ldai {ctr2}
+ldb 1
+add {ctr2}
+ldb 19
+add {scratch}
+brch 2 {d6shrlpend}
+jmp {d6shrloop}
+:d6shrlpend
+
+lda {hexalpha}
+ldbi {d6}
+add {hexptr}
+ldaptr {hexptr}
+ota {d6s}
+
+;; digit group 1
+lda 0
+ota {dg1}
+ldai {d1s}
+ldbi {dg1}
+or {dg1}
+
+lda 0
+ota {ctr2}
+:dg1d2loop
+ldai {d2s}
+shla {d2s}
+ldai {ctr2}
+ldb 1
+add {ctr2}
+ldb 7
+add {scratch}
+brch 2 {dg1d2end}
+jmp {dg1d2loop}
+:dg1d2end
+
+lda 0
+ota {ctr2}
+:dg1d3loop
+ldai {d3s}
+shla {d3s}
+ldai {ctr2}
+ldb 1
+add {ctr2}
+ldb 15
+add {scratch}
+brch 2 {dg1d3end}
+jmp {dg1d3loop}
+:dg1d3end
+
+ldai {d2s}
+ldbi {dg1}
+or {dg1}
+ldai {d3s}
+ldbi {dg1}
+or {dg1}
+
+;; digit group 2
+lda 0
+ota {dg2}
+ldai {d4s}
+ldbi {dg2}
+or {dg2}
+
+lda 0
+ota {ctr2}
+:dg2d5loop
+ldai {d5s}
+shla {d5s}
+ldai {ctr2}
+ldb 1
+add {ctr2}
+ldb 7
+add {scratch}
+brch 2 {dg2d5end}
+jmp {dg2d5loop}
+:dg2d5end
+
+lda 0
+ota {ctr2}
+:dg2d6loop
+ldai {d6s}
+shla {d6s}
+ldai {ctr2}
+ldb 1
+add {ctr2}
+ldb 15
+add {scratch}
+brch 2 {dg2d6end}
+jmp {dg2d6loop}
+:dg2d6end
+
+ldai {d5s}
+ldbi {dg2}
+or {dg2}
+ldai {d6s}
+ldbi {dg2}
+or {dg2}
+
+mov {dg2} 0xF00000
+mov {dg1} 0xF00000
+;; end comma
+mov {comma} 0xF00000
+
+jmp {printnrdone}
+
+:na
+dw 1
+:nb
+dw 1
+:nr
+dw 0
+:nc
+dw 0
+:ctr
+dw 0
+:ctrmax
+dw 33
+
+:ctr2
+dw 0
+
+:d1
+dw 0
+:d2
+dw 0
+:d3
+dw 0
+:d4
+dw 0
+:d5
+dw 0
+:d6
+dw 0
+
+:d1s
+dw 0x41
+:d2s
+dw 0x42
+:d3s
+dw 0x43
+:d4s
+dw 0x44
+:d5s
+dw 0x45
+:d6s
+dw 0x46
+
+:scratch
+dw 0
+
+:hexptr
+dw {hexalpha}
+
+:dg1
+dw 0x0
+:dg2
+dw 0x0
+
+:hexalpha
+dw 0x30
+dw 0x31
+dw 0x32
+dw 0x33
+dw 0x34
+dw 0x35
+dw 0x36
+dw 0x37
+dw 0x38
+dw 0x39
+dw 0x61
+dw 0x62
+dw 0x63
+dw 0x64
+dw 0x65
+dw 0x66
+
+:comma
+dw 0x2c200a
+
+:testnum
+dw 0x123456
+
+:hexstart
+dw 0x203078
+
+:shr
+; setup
+lda 1
+ota {shrval}
+lda 0
+ota {shrctr}
+lda 0
+ota {shrout}
+; loop
+
+:shrloop
+mov {shrval} {shrvallast}
+ldai {shrval}
+shla {shrval}
+;
+ldai {shrval}
+ldbi {shrbuf}
+and {shrtemp}
+ldai {shrtemp}
 ldb 0
-add 0xFFFF
-brch 2 {loopendpc1_100}
-:looppc1_100
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=[
-:loop2_102
-ldaptr 0xFFFC
-ldb 0
-add 0xFFFF
-brch 2 {loopendpc2_102}
-:looppc2_102
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=-
-ldaptr 0xFFFC
-dec 0xFFFF
-otaptr 0xFFFC
-;; BFI=]
-:loopend2_102
-ldaptr 0xFFFC
-ldb 0 
-add 0xFFFF
-brch 2 {loopendpc2_102}
-jmp {looppc2_102}
-:loopendpc2_102
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=[
-:loop2_128
-ldaptr 0xFFFC
-ldb 0
-add 0xFFFF
-brch 2 {loopendpc2_128}
-:looppc2_128
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=-
-ldaptr 0xFFFC
-dec 0xFFFF
-otaptr 0xFFFC
-;; BFI=]
-:loopend2_128
-ldaptr 0xFFFC
-ldb 0 
-add 0xFFFF
-brch 2 {loopendpc2_128}
-jmp {looppc2_128}
-:loopendpc2_128
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=[
-:loop2_147
-ldaptr 0xFFFC
-ldb 0
-add 0xFFFF
-brch 2 {loopendpc2_147}
-:looppc2_147
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=[
-:loop3_159
-ldaptr 0xFFFC
-ldb 0
-add 0xFFFF
-brch 2 {loopendpc3_159}
-:looppc3_159
-;; BFI=-
-ldaptr 0xFFFC
-dec 0xFFFF
-otaptr 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=-
-ldaptr 0xFFFC
-dec 0xFFFF
-otaptr 0xFFFC
-;; BFI=[
-:loop4_163
-ldaptr 0xFFFC
-ldb 0
-add 0xFFFF
-brch 2 {loopendpc4_163}
-:looppc4_163
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=-
-ldaptr 0xFFFC
-dec 0xFFFF
-otaptr 0xFFFC
-;; BFI=]
-:loopend4_163
-ldaptr 0xFFFC
-ldb 0 
-add 0xFFFF
-brch 2 {loopendpc4_163}
-jmp {looppc4_163}
-:loopendpc4_163
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=[
-:loop4_177
-ldaptr 0xFFFC
-ldb 0
-add 0xFFFF
-brch 2 {loopendpc4_177}
-:looppc4_177
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=-
-ldaptr 0xFFFC
-dec 0xFFFF
-otaptr 0xFFFC
-;; BFI=]
-:loopend4_177
-ldaptr 0xFFFC
-ldb 0 
-add 0xFFFF
-brch 2 {loopendpc4_177}
-jmp {looppc4_177}
-:loopendpc4_177
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=[
-:loop4_189
-ldaptr 0xFFFC
-ldb 0
-add 0xFFFF
-brch 2 {loopendpc4_189}
-:looppc4_189
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=[
-:loop5_191
-ldaptr 0xFFFC
-ldb 0
-add 0xFFFF
-brch 2 {loopendpc5_191}
-:looppc5_191
-;; BFI=-
-ldaptr 0xFFFC
-dec 0xFFFF
-otaptr 0xFFFC
-;; BFI=]
-:loopend5_191
-ldaptr 0xFFFC
-ldb 0 
-add 0xFFFF
-brch 2 {loopendpc5_191}
-jmp {looppc5_191}
-:loopendpc5_191
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=[
-:loop5_195
-ldaptr 0xFFFC
-ldb 0
-add 0xFFFF
-brch 2 {loopendpc5_195}
-:looppc5_195
-;; BFI=-
-ldaptr 0xFFFC
-dec 0xFFFF
-otaptr 0xFFFC
-;; BFI=]
-:loopend5_195
-ldaptr 0xFFFC
-ldb 0 
-add 0xFFFF
-brch 2 {loopendpc5_195}
-jmp {looppc5_195}
-:loopendpc5_195
-;; BFI=]
-:loopend4_189
-ldaptr 0xFFFC
-ldb 0 
-add 0xFFFF
-brch 2 {loopendpc4_189}
-jmp {looppc4_189}
-:loopendpc4_189
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=[
-:loop4_200
-ldaptr 0xFFFC
-ldb 0
-add 0xFFFF
-brch 2 {loopendpc4_200}
-:looppc4_200
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=[
-:loop5_203
-ldaptr 0xFFFC
-ldb 0
-add 0xFFFF
-brch 2 {loopendpc5_203}
-:looppc5_203
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=-
-ldaptr 0xFFFC
-dec 0xFFFF
-otaptr 0xFFFC
-;; BFI=]
-:loopend5_203
-ldaptr 0xFFFC
-ldb 0 
-add 0xFFFF
-brch 2 {loopendpc5_203}
-jmp {looppc5_203}
-:loopendpc5_203
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=[
-:loop5_215
-ldaptr 0xFFFC
-ldb 0
-add 0xFFFF
-brch 2 {loopendpc5_215}
-:looppc5_215
-;; BFI=-
-ldaptr 0xFFFC
-dec 0xFFFF
-otaptr 0xFFFC
-;; BFI=]
-:loopend5_215
-ldaptr 0xFFFC
-ldb 0 
-add 0xFFFF
-brch 2 {loopendpc5_215}
-jmp {looppc5_215}
-:loopendpc5_215
-;; BFI=]
-:loopend4_200
-ldaptr 0xFFFC
-ldb 0 
-add 0xFFFF
-brch 2 {loopendpc4_200}
-jmp {looppc4_200}
-:loopendpc4_200
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=]
-:loopend3_159
-ldaptr 0xFFFC
-ldb 0 
-add 0xFFFF
-brch 2 {loopendpc3_159}
-jmp {looppc3_159}
-:loopendpc3_159
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=[
-:loop3_225
-ldaptr 0xFFFC
-ldb 0
-add 0xFFFF
-brch 2 {loopendpc3_225}
-:looppc3_225
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=-
-ldaptr 0xFFFC
-dec 0xFFFF
-otaptr 0xFFFC
-;; BFI=]
-:loopend3_225
-ldaptr 0xFFFC
-ldb 0 
-add 0xFFFF
-brch 2 {loopendpc3_225}
-jmp {looppc3_225}
-:loopendpc3_225
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=[
-:loop3_239
-ldaptr 0xFFFC
-ldb 0
-add 0xFFFF
-brch 2 {loopendpc3_239}
-:looppc3_239
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=-
-ldaptr 0xFFFC
-dec 0xFFFF
-otaptr 0xFFFC
-;; BFI=]
-:loopend3_239
-ldaptr 0xFFFC
-ldb 0 
-add 0xFFFF
-brch 2 {loopendpc3_239}
-jmp {looppc3_239}
-:loopendpc3_239
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=[
-:loop3_251
-ldaptr 0xFFFC
-ldb 0
-add 0xFFFF
-brch 2 {loopendpc3_251}
-:looppc3_251
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=[
-:loop4_253
-ldaptr 0xFFFC
-ldb 0
-add 0xFFFF
-brch 2 {loopendpc4_253}
-:looppc4_253
-;; BFI=-
-ldaptr 0xFFFC
-dec 0xFFFF
-otaptr 0xFFFC
-;; BFI=]
-:loopend4_253
-ldaptr 0xFFFC
-ldb 0 
-add 0xFFFF
-brch 2 {loopendpc4_253}
-jmp {looppc4_253}
-:loopendpc4_253
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=[
-:loop4_257
-ldaptr 0xFFFC
-ldb 0
-add 0xFFFF
-brch 2 {loopendpc4_257}
-:looppc4_257
-;; BFI=-
-ldaptr 0xFFFC
-dec 0xFFFF
-otaptr 0xFFFC
-;; BFI=]
-:loopend4_257
-ldaptr 0xFFFC
-ldb 0 
-add 0xFFFF
-brch 2 {loopendpc4_257}
-jmp {looppc4_257}
-:loopendpc4_257
-;; BFI=]
-:loopend3_251
-ldaptr 0xFFFC
-ldb 0 
-add 0xFFFF
-brch 2 {loopendpc3_251}
-jmp {looppc3_251}
-:loopendpc3_251
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=[
-:loop3_262
-ldaptr 0xFFFC
-ldb 0
-add 0xFFFF
-brch 2 {loopendpc3_262}
-:looppc3_262
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=[
-:loop4_268
-ldaptr 0xFFFC
-ldb 0
-add 0xFFFF
-brch 2 {loopendpc4_268}
-:looppc4_268
-;; BFI=-
-ldaptr 0xFFFC
-dec 0xFFFF
-otaptr 0xFFFC
-;; BFI=]
-:loopend4_268
-ldaptr 0xFFFC
-ldb 0 
-add 0xFFFF
-brch 2 {loopendpc4_268}
-jmp {looppc4_268}
-:loopendpc4_268
-;; BFI=]
-:loopend3_262
-ldaptr 0xFFFC
-ldb 0 
-add 0xFFFF
-brch 2 {loopendpc3_262}
-jmp {looppc3_262}
-:loopendpc3_262
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=]
-:loopend2_147
-ldaptr 0xFFFC
-ldb 0 
-add 0xFFFF
-brch 2 {loopendpc2_147}
-jmp {looppc2_147}
-:loopendpc2_147
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=[
-:loop2_285
-ldaptr 0xFFFC
-ldb 0
-add 0xFFFF
-brch 2 {loopendpc2_285}
-:looppc2_285
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=.
-ldaptr 0xFFFC
-ota 0xF00000
-;; BFI=[
-:loop3_335
-ldaptr 0xFFFC
-ldb 0
-add 0xFFFF
-brch 2 {loopendpc3_335}
-:looppc3_335
-;; BFI=-
-ldaptr 0xFFFC
-dec 0xFFFF
-otaptr 0xFFFC
-;; BFI=]
-:loopend3_335
-ldaptr 0xFFFC
-ldb 0 
-add 0xFFFF
-brch 2 {loopendpc3_335}
-jmp {looppc3_335}
-:loopendpc3_335
-;; BFI=]
-:loopend2_285
-ldaptr 0xFFFC
-ldb 0 
-add 0xFFFF
-brch 2 {loopendpc2_285}
-jmp {looppc2_285}
-:loopendpc2_285
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=[
-:loop2_350
-ldaptr 0xFFFC
-ldb 0
-add 0xFFFF
-brch 2 {loopendpc2_350}
-:looppc2_350
-;; BFI=-
-ldaptr 0xFFFC
-dec 0xFFFF
-otaptr 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=-
-ldaptr 0xFFFC
-dec 0xFFFF
-otaptr 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=]
-:loopend2_350
-ldaptr 0xFFFC
-ldb 0 
-add 0xFFFF
-brch 2 {loopendpc2_350}
-jmp {looppc2_350}
-:loopendpc2_350
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=.
-ldaptr 0xFFFC
-ota 0xF00000
-;; BFI=[
-:loop2_406
-ldaptr 0xFFFC
-ldb 0
-add 0xFFFF
-brch 2 {loopendpc2_406}
-:looppc2_406
-;; BFI=-
-ldaptr 0xFFFC
-dec 0xFFFF
-otaptr 0xFFFC
-;; BFI=]
-:loopend2_406
-ldaptr 0xFFFC
-ldb 0 
-add 0xFFFF
-brch 2 {loopendpc2_406}
-jmp {looppc2_406}
-:loopendpc2_406
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=[
-:loop2_421
-ldaptr 0xFFFC
-ldb 0
-add 0xFFFF
-brch 2 {loopendpc2_421}
-:looppc2_421
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=-
-ldaptr 0xFFFC
-dec 0xFFFF
-otaptr 0xFFFC
-;; BFI=]
-:loopend2_421
-ldaptr 0xFFFC
-ldb 0 
-add 0xFFFF
-brch 2 {loopendpc2_421}
-jmp {looppc2_421}
-:loopendpc2_421
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=[
-:loop2_438
-ldaptr 0xFFFC
-ldb 0
-add 0xFFFF
-brch 2 {loopendpc2_438}
-:looppc2_438
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=-
-ldaptr 0xFFFC
-dec 0xFFFF
-otaptr 0xFFFC
-;; BFI=]
-:loopend2_438
-ldaptr 0xFFFC
-ldb 0 
-add 0xFFFF
-brch 2 {loopendpc2_438}
-jmp {looppc2_438}
-:loopendpc2_438
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=-
-ldaptr 0xFFFC
-dec 0xFFFF
-otaptr 0xFFFC
-;; BFI=[
-:loop2_452
-ldaptr 0xFFFC
-ldb 0
-add 0xFFFF
-brch 2 {loopendpc2_452}
-:looppc2_452
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=.
-ldaptr 0xFFFC
-ota 0xF00000
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=.
-ldaptr 0xFFFC
-ota 0xF00000
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=[
-:loop3_461
-ldaptr 0xFFFC
-ldb 0
-add 0xFFFF
-brch 2 {loopendpc3_461}
-:looppc3_461
-;; BFI=-
-ldaptr 0xFFFC
-dec 0xFFFF
-otaptr 0xFFFC
-;; BFI=]
-:loopend3_461
-ldaptr 0xFFFC
-ldb 0 
-add 0xFFFF
-brch 2 {loopendpc3_461}
-jmp {looppc3_461}
-:loopendpc3_461
-;; BFI=]
-:loopend2_452
-ldaptr 0xFFFC
-ldb 0 
-add 0xFFFF
-brch 2 {loopendpc2_452}
-jmp {looppc2_452}
-:loopendpc2_452
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=[
-:loop2_467
-ldaptr 0xFFFC
-ldb 0
-add 0xFFFF
-brch 2 {loopendpc2_467}
-:looppc2_467
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=-
-ldaptr 0xFFFC
-dec 0xFFFF
-otaptr 0xFFFC
-;; BFI=]
-:loopend2_467
-ldaptr 0xFFFC
-ldb 0 
-add 0xFFFF
-brch 2 {loopendpc2_467}
-jmp {looppc2_467}
-:loopendpc2_467
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=[
-:loop2_481
-ldaptr 0xFFFC
-ldb 0
-add 0xFFFF
-brch 2 {loopendpc2_481}
-:looppc2_481
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=-
-ldaptr 0xFFFC
-dec 0xFFFF
-otaptr 0xFFFC
-;; BFI=]
-:loopend2_481
-ldaptr 0xFFFC
-ldb 0 
-add 0xFFFF
-brch 2 {loopendpc2_481}
-jmp {looppc2_481}
-:loopendpc2_481
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=[
-:loop2_493
-ldaptr 0xFFFC
-ldb 0
-add 0xFFFF
-brch 2 {loopendpc2_493}
-:looppc2_493
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=-
-ldaptr 0xFFFC
-dec 0xFFFF
-otaptr 0xFFFC
-;; BFI=]
-:loopend2_493
-ldaptr 0xFFFC
-ldb 0 
-add 0xFFFF
-brch 2 {loopendpc2_493}
-jmp {looppc2_493}
-:loopendpc2_493
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=[
-:loop2_500
-ldaptr 0xFFFC
-ldb 0
-add 0xFFFF
-brch 2 {loopendpc2_500}
-:looppc2_500
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=+
-ldaptr 0xFFFC
-ldb 1
-add 0xFFFF
-ldai 0xFFFF
-otaptr 0xFFFC
-;; BFI=>
-ldai 0xFFFC
-ldb 1
-add 0xFFFC
-;; BFI=-
-ldaptr 0xFFFC
-dec 0xFFFF
-otaptr 0xFFFC
-;; BFI=]
-:loopend2_500
-ldaptr 0xFFFC
-ldb 0 
-add 0xFFFF
-brch 2 {loopendpc2_500}
-jmp {looppc2_500}
-:loopendpc2_500
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=<
-ldai 0xFFFC
-dec 0xFFFF
-ota 0xFFFC
-;; BFI=-
-ldaptr 0xFFFC
-dec 0xFFFF
-otaptr 0xFFFC
-;; BFI=]
-:loopend1_100
-ldaptr 0xFFFC
-ldb 0 
-add 0xFFFF
-brch 2 {loopendpc1_100}
-jmp {looppc1_100}
-:loopendpc1_100
-dw 0xFF0000
-dw 0xFF0000
-dw 0xFF0000
-dw 0xFF0000
-dw 0xFF0000
-dw 0xFF0000
+add {scratch}
+brch 2 {bitunset}
+ldai {shrout}
+ldbi {shrvallast}
+or {shrout}
+;
+:bitunset
+;;;;;;;
+ldai {shrctr}
+ldb 1
+add {shrctr}
+ldb 24
+add {scratch}
+brch 2 {shrloopend}
+jmp {shrloop}
+:shrloopend
+
+mov {shrendtmpl} {shrendinsn}
+ldai {shrend}
+ldb 0xffff
+and {scratch}
+ldai {shrendinsn}
+ldbi {scratch}
+or {shrendinsn}
+:shrendinsn
+jmp 0
+:shrendtmpl
+jmp 0
+
+:shrvallast
+dw 0
+:shrval
+dw 1
+:shrbuf
+dw 0
+:shrout
+dw 0
+:shrend
+dw 0
+:shrctr
+dw 0
+:shrtemp
+dw 0

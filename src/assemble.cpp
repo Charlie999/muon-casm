@@ -33,6 +33,16 @@ int stoit(const std::string& opcr) {
         return INSN_MOV;
     } else if (strcmp(opc, "add")==0) {
         return INSN_ADD;
+    } else if (strcmp(opc, "and")==0) {
+        return INSN_AND;
+    } else if (strcmp(opc, "not")==0) {
+        return INSN_NOT;
+    } else if (strcmp(opc, "or")==0) {
+        return INSN_OR;
+    } else if (strcmp(opc, "xor")==0) {
+        return INSN_XOR;
+    } else if (strcmp(opc, "shla")==0) {
+        return INSN_SHLA;
     } else if (strcmp(opc, "ina")==0) {
         return INSN_INA;
     } else if (strcmp(opc, "inb")==0) {
@@ -43,6 +53,10 @@ int stoit(const std::string& opcr) {
         return INSN_LDA;
     } else if (strcmp(opc, "ldb")==0) {
         return INSN_LDB;
+    } else if (strcmp(opc, "elda")==0) {
+        return INSN_ELDA;
+    } else if (strcmp(opc, "eldb")==0) {
+        return INSN_ELDB;
     } else if (strcmp(opc, "ldbi")==0) {
         return INSN_LDBI;
     } else if (strcmp(opc, "ldai")==0) {
@@ -232,6 +246,61 @@ std::vector<unsigned char> assemble(const std::string& insnraw,bool movswap,std:
             uint a = decodeint(insn.at(1),ptr,0x00FFFF,true);
 
             ret.push_back(CPU_ADD);
+            ret.push_back((a&0xFF00)>>8);
+            ret.push_back(a&0xFF);
+
+            break;
+        }
+        case INSN_AND: {
+            if (insn.size() != 2)
+                ierror0("invalid instruction format",insnraw);
+            uint a = decodeint(insn.at(1),ptr,0x00FFFF,true);
+
+            ret.push_back(CPU_ANDINSN);
+            ret.push_back((a&0xFF00)>>8);
+            ret.push_back(a&0xFF);
+
+            break;
+        }
+        case INSN_NOT: {
+            if (insn.size() != 2)
+                ierror0("invalid instruction format",insnraw);
+            uint a = decodeint(insn.at(1),ptr,0x00FFFF,true);
+
+            ret.push_back(CPU_NOT);
+            ret.push_back((a&0xFF00)>>8);
+            ret.push_back(a&0xFF);
+
+            break;
+        }
+        case INSN_OR: {
+            if (insn.size() != 2)
+                ierror0("invalid instruction format",insnraw);
+            uint a = decodeint(insn.at(1),ptr,0x00FFFF,true);
+
+            ret.push_back(CPU_ORINSN);
+            ret.push_back((a&0xFF00)>>8);
+            ret.push_back(a&0xFF);
+
+            break;
+        }
+        case INSN_XOR: {
+            if (insn.size() != 2)
+                ierror0("invalid instruction format",insnraw);
+            uint a = decodeint(insn.at(1),ptr,0x00FFFF,true);
+
+            ret.push_back(CPU_XORINSN);
+            ret.push_back((a&0xFF00)>>8);
+            ret.push_back(a&0xFF);
+
+            break;
+        }
+        case INSN_SHLA: {
+            if (insn.size() != 2)
+                ierror0("invalid instruction format",insnraw);
+            uint a = decodeint(insn.at(1),ptr,0x00FFFF,true);
+
+            ret.push_back(CPU_SHLA);
             ret.push_back((a&0xFF00)>>8);
             ret.push_back(a&0xFF);
 
@@ -456,6 +525,36 @@ std::vector<unsigned char> assemble(const std::string& insnraw,bool movswap,std:
             ret.push_back((addr & 0xFF0000) >> 16);
             ret.push_back((addr & 0xFF00) >> 8);
             ret.push_back(addr & 0xFF);
+
+            break;
+        }
+        case INSN_ELDA: {
+            if (insn.size() != 2)
+                ierror0("invalid instruction format",insnraw);
+            uint a = decodeint(insn.at(1),ptr+1,0xFFFFFF,true, true);
+
+            ret.push_back(CPU_ELDA);
+            ret.push_back(0);
+            ret.push_back(0);
+
+            ret.push_back((a&0xFF0000)>>16);
+            ret.push_back((a&0xFF00)>>8);
+            ret.push_back(a&0xFF);
+
+            break;
+        }
+        case INSN_ELDB: {
+            if (insn.size() != 2)
+                ierror0("invalid instruction format",insnraw);
+            uint a = decodeint(insn.at(1),ptr+1,0xFFFFFF,true, true);
+
+            ret.push_back(CPU_ELDB);
+            ret.push_back(0);
+            ret.push_back(0);
+
+            ret.push_back((a&0xFF0000)>>16);
+            ret.push_back((a&0xFF00)>>8);
+            ret.push_back(a&0xFF);
 
             break;
         }

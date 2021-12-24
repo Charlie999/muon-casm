@@ -22,6 +22,13 @@
 #define INSN_OTAPTR 15
 #define INSN_DEC 16
 #define INSN_BRCH 17
+#define INSN_AND 18
+#define INSN_NOT 19
+#define INSN_OR 20
+#define INSN_XOR 21
+#define INSN_SHLA 22
+#define INSN_ELDA 23
+#define INSN_ELDB 24
 
 #define CPU_NOP 0
 #define CPU_JMP 1
@@ -42,6 +49,13 @@
 #define CPU_ADD    0x12
 #define CPU_DEC    0x13
 #define CPU_EOTA   0x14
+#define CPU_ANDINSN    0x15 // changed because of Linux's headers
+#define CPU_NOT    0x16
+#define CPU_ORINSN     0x17
+#define CPU_XORINSN    0x18
+#define CPU_SHLA   0x19
+#define CPU_ELDA   0x20
+#define CPU_ELDB   0x21
 
 #define CPU_CPSW 0xff
 #define CPU_INA 0xff

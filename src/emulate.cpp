@@ -6,6 +6,7 @@
 #include <fstream>
 #include "asm.h"
 #include "insns.h"
+#include "int24.h"
 
 #define uchar unsigned char
 #define uint unsigned int
@@ -70,19 +71,38 @@ void store(uint addr, uint data) {
     } else if (addr == 0xF00001) {
         printf("TERMINAL_WRITE_INT: 0x%06X\n",data);
         return;
+    } else if (addr == 0xF00002) {
+        printf("TERMINAL_WRITE_NUM: %d\n",int24::fromuint(data).operator int());
+        return;
     }
-    memory[addr] = data;
+    memory[addr] = data&0xFFFFFF;
 }
 
 uchar hlt;
 
-uint A,B;
+int A,B;
 
 uint iar = 0;
 
 std::string df;
 
+std::vector<std::pair<uint,uint>> controlflow;
+bool ucf = false;
+
+uint ops;
+uint iters = 0;
+
+long estart;
+long eend;
+
 void emufinish(int code) {
+    eend = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+    long etime = eend-estart;
+
+    double opspersec = ((double)ops/(double)((double)etime/1000));
+    double insnspersec = ((double)iters/(double)((double)etime/1000));
+
+    printf("Emulator done after %d instructions/%d micro-ops, took %ld milliseconds at a rate of %f uops/s (%f insns/s)\n",iters,ops,etime,opspersec,insnspersec);
     if (df.length() > 0) {
         printf("Writing memory dump to %s\n",df.c_str());
         udbg = false;
@@ -104,17 +124,28 @@ void emufinish(int code) {
         dumpfile.close();
         printf("Written %d bytes.\n",1677215*3);
     }
+    if (ucf) {
+        printf("Writing control flow to ./controlflow.txt ...\n");
+        std::ofstream dumpfile("controlflow.txt", std::ios::out);
+        for (auto p : controlflow) {
+            char line[256];
+            int len = snprintf(line, 255, "%06X [%06X]\n",p.first,p.second);
+            dumpfile.write(line,len);
+        }
+        dumpfile.close();
+    }
     exit(code);
 }
 
 unsigned int _do_74181_logical(uchar sel, uint idr, uchar la);
 unsigned int _do_74181_arithmetic(uchar sel, uint idr, uchar la);
 
-void emulate(const std::vector<std::string>& rmem, unsigned char* ucrom, const std::string& dumpfile, int expectediters, bool dbg, bool ep) {
+void emulate(const std::vector<std::string>& rmem, unsigned char* ucrom, const std::string& dumpfile, int expectediters, bool dbg, bool ep, bool cf) {
     udbg = dbg;
     uep = ep;
     ucra = ucrom;
     df = dumpfile;
+    ucf = cf;
     printf("constructing memory...\n");
 
     int i = 0;
@@ -125,10 +156,15 @@ void emulate(const std::vector<std::string>& rmem, unsigned char* ucrom, const s
     }
     dlog("populated words 0x%06X - 0x%06X\n",0,i-1);
 
-    uint iters = 0;
+    estart = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 
     while (hlt == 0) {
         uint idr = load(PC);
+
+        if (cf) {
+            std::pair<uint,uint> p(PC, idr);
+            controlflow.push_back(p);
+        }
 
         uchar opc = (idr & 0xFF0000) >> 16;
         uchar ucr[16];
@@ -150,6 +186,7 @@ void emulate(const std::vector<std::string>& rmem, unsigned char* ucrom, const s
 
         for (i=0;i<16;i++) {
             //dlog("ucop %02X\n",ucr[i]);
+            ops++;
 
             switch (ucr[i]&0xF) {
                 case UC_NOP:
@@ -220,12 +257,12 @@ void emulate(const std::vector<std::string>& rmem, unsigned char* ucrom, const s
                 case UC_ALU:
                     psw &= 0b11111100;
                     at = _do_74181_arithmetic((ucr[i]&0xF0)>>4,idr, la);
-                    dlog("uc alu opc=%d A=0x%06X B=0x%06X set r=0x%06X\n",(ucr[i]&0xF0)>>4,A,B,at);
+                    dlog("uc alu opc=%d A=0x%06X[%d] B=0x%06X[%d] set r=0x%06X\n",(ucr[i]&0xF0)>>4,int24::fromuint(A).limit(),int(int24::fromuint(A)),int24::fromuint(B).limit(),int(int24::fromuint(B)),at);
                     break;
                 case UC_ALUL:
                     psw &= 0b11111100;
                     at = _do_74181_logical((ucr[i]&0xF0)>>4,idr, la);
-                    dlog("uc alul opc=%d A=0x%06X B=0x%06X  set r=0x%06X\n",(ucr[i]&0xF0)>>4,A,B,at);
+                    dlog("uc alul opc=%d A=0x%06X[%d] B=0x%06X[%d]  set r=0x%06X\n",(ucr[i]&0xF0)>>4,A,A,B,B,at);
                     break;
                 case UC_IE:
                     ierror0("Emulator cannot enable interrupts!\n","[EMULATOR]");
@@ -263,59 +300,60 @@ uint _do_74181_logical(uchar sel, uint idr, uchar la) {
     else sp = idr & 0xFFFF;
 
     uint res = 0;
+    uint ra=A, rb=B;
 
     switch (sel & 0xF) {
         case 0:
-            res = ~A;
+            res = ~ra;
             break;
         case 1:
-            res = ~(A | B);
+            res = ~(ra | rb);
             break;
         case 2:
-            res = (~A) & B;
+            res = (~ra) & rb;
             break;
         case 3:
             res = 0;
             break;
         case 4:
-            res = ~(A & B);
+            res = ~(ra & rb);
             break;
         case 5:
-            res = ~B;
+            res = ~rb;
             break;
         case 6:
-            res = A^B;
+            res = ra^rb;
             break;
         case 7:
-            res = A & (~B);
+            res = ra & (~rb);
             break;
         case 8:
-            res = (~A) | B;
+            res = (~ra) | rb;
             break;
         case 9:
-            res = ~(A ^ B);
+            res = ~(ra ^ rb);
             break;
         case 10:
-            res = B;
+            res = rb;
             break;
         case 11:
-            res = A&B;
+            res = ra&rb;
             break;
         case 12:
             res = 0xFFFFFF;
             break;
         case 13:
-            res = A | (~B);
+            res = ra | (~rb);
             break;
         case 14:
-            res = A | B;
+            res = ra | rb;
             break;
         case 15:
-            res = A;
+            res = ra;
             break;
     }
 
-    if (A==B)
+    if (ra==rb)
         setpswequals();
 
     store(sp, res);
@@ -328,56 +366,65 @@ uint _do_74181_arithmetic(uchar sel, uint idr, uchar la) {
     if (la) sp = idr;
     else sp = idr & 0xFFFF;
 
-    uint res = 0;
+    int24 res = 0;
+    int24 ra, rb;
+
+    ra.m_Internal[2] = (A&0xFF0000)>>16;
+    ra.m_Internal[1] = (A&0xFF00)>>8;
+    ra.m_Internal[0] = (A&0xFF);
+
+    rb.m_Internal[2] = (B&0xFF0000)>>16;
+    rb.m_Internal[1] = (B&0xFF00)>>8;
+    rb.m_Internal[0] = (B&0xFF);
 
     switch (sel & 0xF) {
         case 0:
-            res = A;
+            res = ra;
             break;
         case 1:
-            res = A + B;
+            res = ra + rb;
             break;
         case 2:
-            res = A + (~B);
+            res = ra + (~rb);
             break;
         case 3:
             res = -1;
             break;
         case 4:
-            res = A + (A & (~B));
+            res = ra + (ra & (~rb));
             break;
         case 5:
-            res = A + B + (A & (~B));
+            res = ra + rb + (ra & (~rb));
             break;
         case 6:
-            res = A - (B + 1);
+            res = ra - (rb + 1);
             break;
         case 7:
-            res = (A & (~B)) - 1;
+            res = (ra & (~rb)) - 1;
             break;
         case 8:
-            res = A + (A&B);
+            res = ra + (ra&rb);
             break;
         case 9:
-            res = A + B;
+            res = ra + rb;
             break;
         case 10:
-            res = (A + (~B)) + (A&B);
+            res = (ra + (~rb)) + (ra&rb);
             break;
         case 11:
-            res = (A&B) - 1;
+            res = (ra&rb) - 1;
             break;
         case 12:
-            res = A + A;
+            res = ra + ra;
             break;
         case 13:
-            res = (A|B) + A;
+            res = (ra|rb) + ra;
             break;
         case 14:
-            res = (A|(~B)) + A;
+            res = (ra|(~rb)) + ra;
             break;
         case 15:
-            res = A-1;
+            res = ra-1;
             break;
     }
 
@@ -386,9 +433,9 @@ uint _do_74181_arithmetic(uchar sel, uint idr, uchar la) {
         res = 0x7FFFFF;
     }
 
-    if (A==B)
+    if (ra==rb)
         setpswequals();
 
-    store(sp, res);
-    return res;
+    store(sp, res.limit());
+    return res.limit();
 }
