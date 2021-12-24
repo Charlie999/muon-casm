@@ -1,3 +1,5 @@
+;;; Inefficient fibbonacci calculator program (20 digits)
+
 dw 0
 ;; start
 :start
@@ -287,7 +289,6 @@ dw 0
 dw 0
 :ctrmax
 dw 33
-
 :ctr2
 dw 0
 

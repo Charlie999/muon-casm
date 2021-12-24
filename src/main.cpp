@@ -3,6 +3,8 @@
 #include <fstream>
 #include <sstream>
 #include <algorithm>
+#include <uv.h>
+#include <unistd.h>
 #include "../cxxopts/cxxopts.hpp"
 #include "asm.h"
 
@@ -10,6 +12,9 @@ std::string infile;
 std::string ofile;
 std::vector<std::string> indata;
 std::vector<unsigned char> outbuf;
+
+#define UCODE_URL "/muon-3/ucode.bin"
+#define UCODE_URL_HOST "storage.googleapis.com"
 
 inline bool exists(const std::string& name) {
     std::ifstream f(name.c_str());
@@ -46,6 +51,10 @@ enum omodes {
 
 pmodes mode = COMPILE;
 omodes omode = HEX;
+
+int getdoublenlptr(const char *buf);
+
+int gethttpcl(char buf[10240]);
 
 int main(int argc, char** argv) {
 
@@ -227,8 +236,75 @@ int main(int argc, char** argv) {
         }
 
         auto *ucrom = (unsigned char *) malloc(4096);
+        memset(ucrom, 0, 4096);
 
         if (argsresult.count("fetchucode")) {
+            printf("WARNING: --fetchucode is just a development convenience! Using this is not recommended.\n");
+            printf("fetching ucode from http://%s%s\n",UCODE_URL_HOST,UCODE_URL);
+            int sockfd = socket(AF_INET, SOCK_STREAM, 0);
+            if (sockfd < 0) {
+                printf("socket creation failed\n");
+                exit(-1);
+            }
+            struct sockaddr_in serv{};
+            serv.sin_family = AF_INET;
+            serv.sin_port = htons(80);
+            const char* addr;
+            addrinfo hints, *res;
+            hints.ai_family = AF_UNSPEC;
+            hints.ai_socktype = SOCK_STREAM;
+            hints.ai_protocol = IPPROTO_TCP;
+            if (getaddrinfo(UCODE_URL_HOST, nullptr, &hints, &res) != 0) {
+                printf("cannot resolve %s\n",UCODE_URL_HOST);
+                exit(-1);
+            }
+            addr = inet_ntoa(((struct sockaddr_in*)res->ai_addr)->sin_addr);
+            if (inet_pton(AF_INET, addr, &serv.sin_addr)<=0) {
+                printf("invalid address\n");
+                exit(-1);
+            }
+            if (connect(sockfd, (struct sockaddr*)&serv, sizeof(serv)) < 0) {
+                printf("connection to %s:80 failed\n",inet_ntoa(serv.sin_addr));
+                exit(-1);
+            }
+            printf("connected to %s:80\n",inet_ntoa(serv.sin_addr));
+            char buf[10240];
+            int plen = snprintf(buf,10240,"GET %s HTTP/1.0\nHost: %s\nUser-Agent: casm/1\n\n",UCODE_URL,UCODE_URL_HOST);
+            send(sockfd, buf, plen, 0);
+            int ptr = 0;
+            plen = read(sockfd, buf, 10240);
+            if (plen<0) {
+                printf("read error [%d]\n",plen);
+                close(sockfd);
+                exit(-1);
+            }
+            ptr += plen;
+            if (strncmp(buf, "HTTP/1.0 200 OK", 15) != 0) {
+                printf("HTTP error: [%s]\n",buf);
+                close(sockfd);
+                exit(-1);
+            }
+            while (plen > 0) {
+                plen = read(sockfd, buf+ptr, 10240-ptr);
+                if (plen < 0) {
+                    printf("read error [%d]\n",plen);
+                    close(sockfd);
+                    exit(-1);
+                }
+                ptr += plen;
+            }
+            close(sockfd);
+            int cl = gethttpcl(buf);
+            if (cl<=0) {
+                printf("invalid content length\n");
+            }
+            auto* ucs = (unsigned char*)(buf + getdoublenlptr(buf));
+            if (cl != 4096 && cl != 2048) {
+                printf("invalid uc rom length [%d]\n",cl);
+                exit(-1);
+            }
+            memcpy(ucrom, ucs, cl);
+            printf("fetched %d bytes into ucode rom\n",cl);
 
         } else {
             printf("Reading microcode ROM %s\n", ucfile.c_str());
@@ -339,4 +415,21 @@ int main(int argc, char** argv) {
 
         return 0;
     }
+}
+
+int gethttpcl(char buf[10240]) {
+    for (const auto& line : split(std::string(buf),"\r\n")) {
+        if (memcmp(line.c_str(),"Content-Length:",15) == 0) {
+            return strtol(line.c_str() + 15,nullptr,10);
+        }
+    }
+    return -1;
+}
+
+int getdoublenlptr(const char *buf) {
+    for (int i=0;i<10237;i++) {
+        if (buf[i] == '\r' && buf[i+1] == '\n' && buf[i+2] == '\r' && buf[i+3] == '\n')
+            return i+4;
+    }
+    return -1;
 }
