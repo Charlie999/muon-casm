@@ -75,6 +75,7 @@ int main(int argc, char** argv) {
             ("coredump","(optional) save a memory dump from the emulator upon exit", cxxopts::value<std::string>())
             ("expectediters","stop the emulator (with an error) to prevent infinite loops", cxxopts::value<int>())
             ("controlflow","dump the control flow for a program in the emulator")
+            ("fetchucode","fetch the latest microcode ROM from Jenkins")
             ("ucodesplit","split ucode into lower and upper 2K (this file is the upper 2K)", cxxopts::value<std::string>());
 
     auto argsresult = options.parse(argc, argv);
@@ -225,14 +226,19 @@ int main(int argc, char** argv) {
             indata.push_back(line);
         }
 
-        printf("Reading microcode ROM %s\n",ucfile.c_str());
-        auto *ucrom = (unsigned char*)malloc(4096);
-        std::ifstream ucs (ucfile, std::ios::in | std::ios::binary);
-        if (!ucs.read(reinterpret_cast<char *>(ucrom), 4096)) {
-            printf("error reading ucode rom from file\n");
-            exit(1);
+        auto *ucrom = (unsigned char *) malloc(4096);
+
+        if (argsresult.count("fetchucode")) {
+
+        } else {
+            printf("Reading microcode ROM %s\n", ucfile.c_str());
+            std::ifstream ucs(ucfile, std::ios::in | std::ios::binary);
+            if (!ucs.read(reinterpret_cast<char *>(ucrom), 4096)) {
+                printf("error reading ucode rom from file\n");
+                exit(1);
+            }
+            ucs.close();
         }
-        ucs.close();
 
         std::string cdf;
         if (argsresult.count("coredump"))
