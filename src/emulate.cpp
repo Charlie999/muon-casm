@@ -140,6 +140,8 @@ void emufinish(int code) {
 unsigned int _do_74181_logical(uchar sel, uint idr, uchar la);
 unsigned int _do_74181_arithmetic(uchar sel, uint idr, uchar la);
 
+unsigned int lim24(unsigned int res);
+
 void emulate(const std::vector<std::string>& rmem, unsigned char* ucrom, const std::string& dumpfile, int expectediters, bool dbg, bool ep, bool cf) {
     udbg = dbg;
     uep = ep;
@@ -294,6 +296,10 @@ void emulate(const std::vector<std::string>& rmem, unsigned char* ucrom, const s
     }
 }
 
+unsigned int lim24(unsigned int res) {
+    return res&0xFFFFFF;
+}
+
 uint _do_74181_logical(uchar sel, uint idr, uchar la) {
     uint sp = 0;
     if (la) sp = idr;
@@ -328,7 +334,8 @@ uint _do_74181_logical(uchar sel, uint idr, uchar la) {
             res = ra & (~rb);
             break;
         case 8:
-            res = (~ra) | rb;
+            //res = (~ra) | rb;
+            res = (ra>>1) | ((ra&1)<<23);
             break;
         case 9:
             res = ~(ra ^ rb);
@@ -353,7 +360,7 @@ uint _do_74181_logical(uchar sel, uint idr, uchar la) {
             break;
     }
 
-    if (ra==rb)
+    if (lim24(res) == 0xFFFFFF)
         setpswequals();
 
     store(sp, res);
@@ -433,7 +440,7 @@ uint _do_74181_arithmetic(uchar sel, uint idr, uchar la) {
         res = 0x7FFFFF;
     }
 
-    if (ra==rb)
+    if (res.limit() == 0xFFFFFF)
         setpswequals();
 
     store(sp, res.limit());

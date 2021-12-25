@@ -29,6 +29,8 @@
 #define INSN_SHLA 22
 #define INSN_ELDA 23
 #define INSN_ELDB 24
+#define INSN_SHRA 25
+#define INSN_CMP 26
 
 #define CPU_NOP 0
 #define CPU_JMP 1
@@ -56,6 +58,8 @@
 #define CPU_SHLA   0x19
 #define CPU_ELDA   0x20
 #define CPU_ELDB   0x21
+#define CPU_SHRA   0x22
+#define CPU_CMP    0x23
 
 #define CPU_CPSW 0xff
 #define CPU_INA 0xff

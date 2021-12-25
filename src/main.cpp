@@ -3,7 +3,9 @@
 #include <fstream>
 #include <sstream>
 #include <algorithm>
+#ifdef __linux__
 #include <uv.h>
+#endif
 #include <unistd.h>
 #include "../cxxopts/cxxopts.hpp"
 #include "asm.h"
@@ -208,13 +210,15 @@ int main(int argc, char** argv) {
         infile.clear();
         infile.append(argsresult["input"].as<std::string>());
 
-        if (!argsresult.count("ucrom")) {
+        if (!argsresult.count("ucrom") && !argsresult.count("fetchucode")) {
             printf("--ucrom required for emulation!\n");
             std::cout << options.help();
             return 0;
         }
 
-        std::string ucfile = argsresult["ucrom"].as<std::string>();
+        std::string ucfile;
+        if (argsresult.count("ucrom"))
+            ucfile = argsresult["ucrom"].as<std::string>();
 
         if (!exists(infile)) {
             printf("file doesn't exist: %s\n", infile.c_str());
@@ -239,6 +243,7 @@ int main(int argc, char** argv) {
         memset(ucrom, 0, 4096);
 
         if (argsresult.count("fetchucode")) {
+#ifdef __linux__
             printf("WARNING: --fetchucode is just a development convenience! Using this is not recommended.\n");
             printf("fetching ucode from http://%s%s\n",UCODE_URL_HOST,UCODE_URL);
             int sockfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -304,7 +309,13 @@ int main(int argc, char** argv) {
                 exit(-1);
             }
             memcpy(ucrom, ucs, cl);
+            printf("ucode rom i0 bytes: %02X %02X %02X %02X %02X %02X %02X %02X\n",ucrom[0],ucrom[1],ucrom[2],ucrom[3],ucrom[4],ucrom[5],ucrom[6],ucrom[7]);
+            printf("ucode rom i1 bytes: %02X %02X %02X %02X %02X %02X %02X %02X\n",ucrom[16],ucrom[17],ucrom[18],ucrom[19],ucrom[20],ucrom[21],ucrom[22],ucrom[23]);
             printf("fetched %d bytes into ucode rom\n",cl);
+#else
+            printf("error: feature only supported on Linux\n");
+            exit(-1);
+#endif
 
         } else {
             printf("Reading microcode ROM %s\n", ucfile.c_str());

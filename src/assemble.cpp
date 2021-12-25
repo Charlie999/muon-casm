@@ -43,6 +43,8 @@ int stoit(const std::string& opcr) {
         return INSN_XOR;
     } else if (strcmp(opc, "shla")==0) {
         return INSN_SHLA;
+    } else if (strcmp(opc, "shra")==0) {
+        return INSN_SHRA;
     } else if (strcmp(opc, "ina")==0) {
         return INSN_INA;
     } else if (strcmp(opc, "inb")==0) {
@@ -73,6 +75,8 @@ int stoit(const std::string& opcr) {
         return INSN_DEC;
     } else if (strcmp(opc, "brch")==0) {
         return INSN_BRCH;
+    } else if (strcmp(opc, "cmp")==0) {
+        return INSN_CMP;
     } else if (strcmp(opc, "dw")==0) {
         return INSN_DW;
     } else if (strcmp(opc, "ds")==0) {
@@ -306,6 +310,17 @@ std::vector<unsigned char> assemble(const std::string& insnraw,bool movswap,std:
 
             break;
         }
+        case INSN_SHRA: {
+            if (insn.size() != 2)
+                ierror0("invalid instruction format",insnraw);
+            uint a = decodeint(insn.at(1),ptr,0x00FFFF,true);
+
+            ret.push_back(CPU_SHRA);
+            ret.push_back((a&0xFF00)>>8);
+            ret.push_back(a&0xFF);
+
+            break;
+        }
         case INSN_INA: {
             if (insn.size() != 2)
                 ierror0("invalid instruction format",insnraw);
@@ -323,6 +338,17 @@ std::vector<unsigned char> assemble(const std::string& insnraw,bool movswap,std:
             uint a = decodeint(insn.at(1),ptr,0x00FFFF,true);
 
             ret.push_back(CPU_INB);
+            ret.push_back((a&0xFF00)>>8);
+            ret.push_back(a&0xFF);
+
+            break;
+        }
+        case INSN_CMP: {
+            if (insn.size() != 2)
+                ierror0("invalid instruction format",insnraw);
+            uint a = decodeint(insn.at(1),ptr,0x00FFFF,true);
+
+            ret.push_back(CPU_CMP);
             ret.push_back((a&0xFF00)>>8);
             ret.push_back(a&0xFF);
 
