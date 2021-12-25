@@ -101,8 +101,10 @@ void emufinish(int code) {
 
     double opspersec = ((double)ops/(double)((double)etime/1000));
     double insnspersec = ((double)iters/(double)((double)etime/1000));
+    double mhz = opspersec/1000000.0;
 
     printf("Emulator done after %d instructions/%d micro-ops, took %ld milliseconds at a rate of %f uops/s (%f insns/s)\n",iters,ops,etime,opspersec,insnspersec);
+    printf("speed approx %fMHz\n",mhz);
     if (df.length() > 0) {
         printf("Writing memory dump to %s\n",df.c_str());
         udbg = false;
@@ -339,6 +341,7 @@ uint _do_74181_logical(uchar sel, uint idr, uchar la) {
             break;
         case 9:
             res = ~(ra ^ rb);
+            //printf("CMP 0x%06X==0x%06X  ==> 0x%06X\n",ra,rb,res);
             break;
         case 10:
             res = rb;
