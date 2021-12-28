@@ -665,7 +665,7 @@ std::vector<unsigned char> assemble(const std::string& insnraw,bool movswap,std:
             break;
         }
         case INSN_CALL: {
-            if (insn.size() != 2)
+            if (insn.size() != 3)
                 ierror0("invalid instruction format",insnraw);
 
             uint a = decodeint(insn.at(1),ptr+2,0x00FFFF,true, true);
