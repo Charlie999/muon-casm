@@ -35,6 +35,8 @@
 #define INSN_IRET 28
 #define INSN_IE 29
 #define INSN_SMM 30
+#define INSN_CALL 31
+#define INSN_IJMP 32
 
 #define INSN_HCF 9999
 
@@ -70,6 +72,7 @@
 #define CPU_CMP    0x23
 #define CPU_CMPBH  0x24
 #define CPU_IRET   0x25
+#define CPU_IJMP   0x26
 
 #define CPU_CPSW 0xff
 #define CPU_INA 0xff

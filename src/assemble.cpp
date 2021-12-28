@@ -92,6 +92,10 @@ int stoit(const std::string& opcr) {
         return INSN_IE;
     } else if (strcmp(opc, "smm")==0) {
         return INSN_SMM;
+    } else if (strcmp(opc, "call")==0) {
+        return INSN_CALL;
+    } else if (strcmp(opc, "ijmp")==0) {
+        return INSN_IJMP;
     } else {
         printf("Unknown instruction [%s]\n",opc);
         exit(1);
@@ -657,6 +661,47 @@ std::vector<unsigned char> assemble(const std::string& insnraw,bool movswap,std:
             ret.push_back(CPU_SMM);
             ret.push_back((a&0xFF00)>>8);
             ret.push_back(a&0xFF);
+
+            break;
+        }
+        case INSN_CALL: {
+            if (insn.size() != 2)
+                ierror0("invalid instruction format",insnraw);
+
+            uint a = decodeint(insn.at(1),ptr+2,0x00FFFF,true, true);
+            uint b = decodeint(insn.at(2),ptr+1,0xFFFFFF,true, true);
+
+            uint after_ptr = ptr+3;
+            ret.push_back(CPU_LDB);
+            ret.push_back((after_ptr&0xFF00)>>8);
+            ret.push_back(after_ptr&0xFF);
+
+            ret.push_back(CPU_OTB);
+            ret.push_back((b&0xFF00)>>8);
+            ret.push_back(b&0xFF);
+
+            ret.push_back(CPU_JMP);
+            ret.push_back((a&0xFF00)>>8);
+            ret.push_back(a&0xFF);
+
+            break;
+        }
+        case INSN_IJMP: {
+            if (insn.size() != 2)
+                ierror0("invalid instruction format",insnraw);
+            uint a = decodeint(insn.at(1),ptr,0x00FFFF,true, true);
+
+            ret.push_back(CPU_IJMP);
+            ret.push_back((a&0xFF00)>>8);
+            ret.push_back(a&0xFF);
+
+            ret.push_back(((ptr+2)&0xFF0000)>>16);
+            ret.push_back(((ptr+2)&0xFF00)>>8);
+            ret.push_back((ptr+2)&0xFF);
+
+            ret.push_back(0);
+            ret.push_back(0);
+            ret.push_back(0);
 
             break;
         }
