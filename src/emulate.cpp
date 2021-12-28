@@ -37,7 +37,8 @@ void setpswequals() {
 
 uint load(uint addr) {
     uchar smmr = (smm&0xF)<<17;
-    addr |= smmr;
+    if (addr < 0xF00000)
+        addr |= smmr;
 
     dlog("LOAD @0x%06X [0x%06X]\n",addr, memory[addr]);
     if (addr >= 0xFFF800) {
@@ -144,6 +145,36 @@ unsigned int _do_74181_arithmetic(uchar sel, uint idr, uchar la);
 
 unsigned int lim24(unsigned int res);
 
+bool ie = false;
+bool timerready = false;
+
+void icheck() {
+    if (!ie) return;
+
+    if (ie && ops==262144) {
+        dlog("timer interrupt\n");
+        timerready = true;
+    }
+
+    uchar iid = 0;
+    bool interrupt = false;
+
+    if (timerready) {
+        timerready = false;
+        interrupt = true;
+        iid = 4;
+    }
+
+    if (interrupt) {
+        dlog("interrupt id=%02X\n",iid);
+        iar = PC;
+        psw &= 0b11;
+        psw |= (iid&0b111111)<<2;
+        PC = 0;
+        ie = false;
+    }
+}
+
 void emulate(const std::vector<std::string>& rmem, unsigned char* ucrom, const std::string& dumpfile, int expectediters, bool dbg, bool ep, bool cf) {
     udbg = dbg;
     uep = ep;
@@ -163,6 +194,9 @@ void emulate(const std::vector<std::string>& rmem, unsigned char* ucrom, const s
     estart = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 
     while (hlt == 0) {
+        icheck();
+        fetchstart:
+
         uint idr = load(PC);
 
         if (cf) {
@@ -186,6 +220,17 @@ void emulate(const std::vector<std::string>& rmem, unsigned char* ucrom, const s
         if (opc == 0xFF) {
             dlog("hcf end\n");
             emufinish(0);
+        }
+
+        if (opc == 0xFE) {
+            uint pct = PC;
+            dlog("vm interrupt wait [ie=%d,pct=0x%06X]...\n",ie,pct);
+            while (pct == PC && ie) {
+                icheck();
+                ops++;
+            }
+            if (ie) goto fetchstart;
+            goto ucloopend;
         }
 
         for (i=0;i<16;i++) {
@@ -269,7 +314,8 @@ void emulate(const std::vector<std::string>& rmem, unsigned char* ucrom, const s
                     dlog("uc alul opc=%d A=0x%06X[%d] B=0x%06X[%d]  set r=0x%06X\n",(ucr[i]&0xF0)>>4,A,A,B,B,at);
                     break;
                 case UC_IE:
-                    ierror0("Emulator cannot enable interrupts!\n","[EMULATOR]");
+                    ie = true;
+                    dlog("uc ie\n");
                     break;
                 case UC_END:
                     dlog("uc end\n");
@@ -284,11 +330,23 @@ void emulate(const std::vector<std::string>& rmem, unsigned char* ucrom, const s
                 log("prevented infinite ucode loop, emulator exiting.\n");
                 emufinish(-1);
             }
+
+            if (ie && ops==262144) {
+                dlog("timer interrupt\n");
+                timerready = true;
+            }
         }
 
         ucloopend:
 
         if (!jmp) PC++;
+
+        ops++;
+
+        if (ie && ops==262144) {
+            dlog("timer interrupt\n");
+            timerready = true;
+        }
 
         iters++;
         if (iters > expectediters && expectediters > 0) {

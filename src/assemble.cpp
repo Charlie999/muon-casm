@@ -81,7 +81,17 @@ int stoit(const std::string& opcr) {
         return INSN_DW;
     } else if (strcmp(opc, "ds")==0) {
         return INSN_DS;
-    }  else {
+    } else if (strcmp(opc, "cmpbh")==0) {
+        return INSN_CMPBH;
+    } else if (strcmp(opc, "iret")==0) {
+        return INSN_IRET;
+    } else if (strcmp(opc, "hcf")==0) {
+        return INSN_HCF;
+    } else if (strcmp(opc, "ie")==0) {
+        return INSN_IE;
+    } else if (strcmp(opc, "smm")==0) {
+        return INSN_SMM;
+    } else {
         printf("Unknown instruction [%s]\n",opc);
         exit(1);
     }
@@ -579,6 +589,66 @@ std::vector<unsigned char> assemble(const std::string& insnraw,bool movswap,std:
             ret.push_back(0);
 
             ret.push_back((a&0xFF0000)>>16);
+            ret.push_back((a&0xFF00)>>8);
+            ret.push_back(a&0xFF);
+
+            break;
+        }
+        case INSN_IRET: {
+            if (insn.size() != 1)
+                ierror0("invalid instruction format",insnraw);
+
+            ret.push_back(CPU_IRET);
+            ret.push_back(0);
+            ret.push_back(0);
+
+            break;
+        }
+        case INSN_CMPBH: {
+            if (insn.size() != 2)
+                ierror0("invalid instruction format",insnraw);
+            uint a = decodeint(insn.at(1),ptr+2,0xFFFFFF,true, true);
+
+            ret.push_back(CPU_CMPBH);
+            ret.push_back(0);
+            ret.push_back(0);
+
+            ret.push_back(0);
+            ret.push_back(0);
+            ret.push_back(2);
+
+            ret.push_back((a&0xFF0000)>>16);
+            ret.push_back((a&0xFF00)>>8);
+            ret.push_back(a&0xFF);
+
+            break;
+        }
+        case INSN_HCF: {
+            if (insn.size() != 1)
+                ierror0("invalid instruction format",insnraw);
+
+            ret.push_back(CPU_HCF);
+            ret.push_back(0);
+            ret.push_back(0);
+
+            break;
+        }
+        case INSN_IE: {
+            if (insn.size() != 1)
+                ierror0("invalid instruction format",insnraw);
+
+            ret.push_back(CPU_IE);
+            ret.push_back(0);
+            ret.push_back(0);
+
+            break;
+        }
+        case INSN_SMM: {
+            if (insn.size() != 2)
+                ierror0("invalid instruction format",insnraw);
+            uint a = decodeint(insn.at(1),ptr,0x00FFFF,true, true);
+
+            ret.push_back(CPU_SMM);
             ret.push_back((a&0xFF00)>>8);
             ret.push_back(a&0xFF);
 

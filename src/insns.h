@@ -31,6 +31,12 @@
 #define INSN_ELDB 24
 #define INSN_SHRA 25
 #define INSN_CMP 26
+#define INSN_CMPBH 27
+#define INSN_IRET 28
+#define INSN_IE 29
+#define INSN_SMM 30
+
+#define INSN_HCF 9999
 
 #define CPU_NOP 0
 #define CPU_JMP 1
@@ -45,6 +51,8 @@
 #define CPU_OTB 10
 
 #define CPU_BRCH   0x0B
+#define CPU_IE     0x0E
+#define CPU_SMM    0x0F
 
 #define CPU_LDAPTR 0x10
 #define CPU_OTAPTR 0x11
@@ -60,10 +68,14 @@
 #define CPU_ELDB   0x21
 #define CPU_SHRA   0x22
 #define CPU_CMP    0x23
+#define CPU_CMPBH  0x24
+#define CPU_IRET   0x25
 
 #define CPU_CPSW 0xff
 #define CPU_INA 0xff
 #define CPU_INB 0xff
+
+#define CPU_HCF 0xff
 
 #define UC_NOP  0x00
 #define UC_LD   0x01
