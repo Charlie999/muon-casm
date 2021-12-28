@@ -2,6 +2,7 @@
 #include <string>
 #include <algorithm>
 #include <cstring>
+#include <iostream>
 #include "insns.h"
 
 #define ENABLE_LABEL_ENGINE
@@ -130,45 +131,50 @@ label* getlabel(const std::string& n) {
 #define lelog(...) {printf("[labelengine] "); printf(__VA_ARGS__);}
 
 unsigned int decodeint(std::string a, uint _ptr, uint imask, bool lookuplabels, bool enablelabels = true) {
-    std::string s;
-    if (a.length()>=2) {
+    try {
+        std::string s;
+        if (a.length() >= 2) {
 #ifdef ENABLE_LABEL_ENGINE
-        std::string t(a);
-        t.erase(std::remove(t.begin(),t.end(),','), t.end());
-        if (t.c_str()[0] == '{' && t.c_str()[t.length()-1] == '}' && enablelabels) {
-            std::string lblname(t.c_str()+1);
-            lblname.pop_back();
-            lelog("get label %s\n",lblname.c_str());
-            label *lbl = getlabel(lblname);
-            if (!lbl) {
-                lelog("label %s not found\n",lblname.c_str());
-                if (!lookuplabels)
-                    return 0xFFFFFFE0;
-                lelog("label lookup queued for %s\n",lblname.c_str());
-                labellookup llk;
-                strncpy(llk.name,lblname.c_str(),256);
-                llk.ptr = _ptr;
-                llk.mask = imask;
-                labelqueue.push_back(llk);
-                return 0;
+            std::string t(a);
+            t.erase(std::remove(t.begin(), t.end(), ','), t.end());
+            if (t.c_str()[0] == '{' && t.c_str()[t.length() - 1] == '}' && enablelabels) {
+                std::string lblname(t.c_str() + 1);
+                lblname.pop_back();
+                lelog("get label %s\n", lblname.c_str());
+                label *lbl = getlabel(lblname);
+                if (!lbl) {
+                    lelog("label %s not found\n", lblname.c_str());
+                    if (!lookuplabels)
+                        return 0xFFFFFFE0;
+                    lelog("label lookup queued for %s\n", lblname.c_str());
+                    labellookup llk;
+                    strncpy(llk.name, lblname.c_str(), 256);
+                    llk.ptr = _ptr;
+                    llk.mask = imask;
+                    labelqueue.push_back(llk);
+                    return 0;
+                }
+                lelog("got label ptr for %s: 0x%06X\n", lblname.c_str(), lbl->ptr);
+                uint ptr = lbl->ptr;
+                free(lbl);
+                return ptr;
             }
-            lelog("got label ptr for %s: 0x%06X\n",lblname.c_str(),lbl->ptr);
-            uint ptr = lbl->ptr;
-            free(lbl);
-            return ptr;
-        }
 #endif
 
-        char sr[a.length() - 2];
-        sr[a.length() - 2] = 0;
-        memcpy(sr, a.c_str() + 2, a.length() - 2);
-        s = std::string(sr);
+            char sr[a.length() - 2];
+            sr[a.length() - 2] = 0;
+            memcpy(sr, a.c_str() + 2, a.length() - 2);
+            s = std::string(sr);
+        }
+        if (a[0] == '0' && a[1] == 'x')
+            return std::stoul(s, nullptr, 16);
+        if (a[0] == '0' && a[1] == 'b')
+            return std::stoul(s, nullptr, 2);
+        return std::stoul(a, nullptr, 10);
+    } catch (std::exception e) {
+        std::cerr << "Number parsing exception for [" << a << "]: \n" << e.what() << std::endl;
+        exit(-1);
     }
-    if (a[0] == '0' && a[1] == 'x')
-        return std::stoul(s, nullptr, 16);
-    if (a[0] == '0' && a[1] == 'b')
-        return std::stoul(s, nullptr, 2);
-    return std::stoul(a, nullptr, 10);
 }
 
 void ierror0(const std::string& reason, const std::string& insn) {
