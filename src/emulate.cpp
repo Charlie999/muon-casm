@@ -50,7 +50,8 @@ uint load(uint addr) {
 
 void store(uint addr, uint data) {
     uchar smmr = (smm&0xF)<<17;
-    addr |= smmr;
+    if (addr < 0xF00000)
+        addr |= smmr;
 
     if (addr >= 0xFFFFFF) ierror0("Invalid memory write", "[EMULATOR=>store()]");
 
