@@ -38,6 +38,8 @@
 #define INSN_CALL 31
 #define INSN_IJMP 32
 
+#define INSN_DP 33
+
 #define INSN_HCF 9999
 
 #define CPU_NOP 0
