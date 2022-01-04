@@ -475,7 +475,7 @@ std::vector<unsigned char> assemble(const std::string& insnraw,bool movswap,std:
 
             break;
         }
-        case INSN_LDAI: {
+        /*case INSN_LDAI: {
             if (insn.size() != 2)
                 ierror0("invalid instruction format",insnraw);
             uint a = decodeint(insn.at(1),ptr,0x00FFFF,true, true);
@@ -485,7 +485,30 @@ std::vector<unsigned char> assemble(const std::string& insnraw,bool movswap,std:
             ret.push_back(a&0xFF);
 
             break;
+        }*/
+        case INSN_LDAI: {
+            if (insn.size() != 2)
+                ierror0("invalid instruction format",insnraw);
+            uint a = decodeint(insn.at(1),ptr,0x00FFFF,false);
+            if (a <= 0xFFFF) {
+                a = decodeint(insn.at(1),ptr,0x00FFFF,true, true);
+                ret.push_back(CPU_LDAI);
+                ret.push_back((a&0xFF00)>>8);
+                ret.push_back(a&0xFF);
+            } else {
+                a = decodeint(insn.at(1),ptr+1,0xFFFFFF,true, true);
+                ret.push_back(CPU_ELDAI);
+                ret.push_back(0);
+                ret.push_back(0);
+
+                ret.push_back((a&0xFF0000)>>16);
+                ret.push_back((a&0xFF00)>>8);
+                ret.push_back(a&0xFF);
+            }
+
+            break;
         }
+
         case INSN_LDBI: {
             if (insn.size() != 2)
                 ierror0("invalid instruction format",insnraw);

@@ -75,6 +75,7 @@
 #define CPU_CMPBH  0x24
 #define CPU_IRET   0x25
 #define CPU_IJMP   0x26
+#define CPU_ELDAI  0x27
 
 #define CPU_CPSW 0xff
 #define CPU_INA 0xff
