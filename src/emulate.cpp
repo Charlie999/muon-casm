@@ -62,13 +62,11 @@ void store(uint addr, uint data) {
         printf("WCS WRITE 0x%03X [0x%02X]\n",ucromaddr,ucra[ucromaddr]);
         return;
     } else if (addr == 0xF00000) {
-        uchar a = (data&0xFF0000)>>16;
-        uchar b = (data&0xFF00)>>8;
         uchar c = (data&0xFF);
         if (uep)
-            printf("%c%c%c",a,b,c);
+            printf("%c",c);
         else
-            printf("TERMINAL_WRITE: %c%c%c\n",a,b,c);
+            printf("TERMINAL_WRITE: %c\n",c);
         return;
     } else if (addr == 0xF00001) {
         printf("TERMINAL_WRITE_INT: 0x%06X\n",data);
