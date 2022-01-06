@@ -464,7 +464,8 @@ uint _do_74181_arithmetic(uchar sel, uint idr, uchar la) {
             res = ra + rb + (ra & (~rb));
             break;
         case 6:
-            res = ra - (rb + 1);
+            res = ra - rb;
+            res = res - int24(1);
             break;
         case 7:
             res = (ra & (~rb)) - 1;
