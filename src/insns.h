@@ -37,10 +37,9 @@
 #define INSN_SMM 30
 #define INSN_CALL 31
 #define INSN_IJMP 32
-
 #define INSN_DP 33
-
 #define INSN_SUB 34
+#define INSN_SCALL 35
 
 #define INSN_HCF 9999
 

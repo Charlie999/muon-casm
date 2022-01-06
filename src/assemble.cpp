@@ -98,6 +98,8 @@ int stoit(const std::string& opcr) {
         return INSN_SMM;
     } else if (strcmp(opc, "call")==0) {
         return INSN_CALL;
+    } else if (strcmp(opc, "scall")==0) {
+        return INSN_SCALL;
     } else if (strcmp(opc, "ijmp")==0) {
         return INSN_IJMP;
     } else {
@@ -742,6 +744,31 @@ std::vector<unsigned char> assemble(const std::string& insnraw,bool movswap,std:
             ret.push_back(b&0xFF);
 
             ret.push_back(CPU_JMP);
+            ret.push_back((a&0xFF00)>>8);
+            ret.push_back(a&0xFF);
+
+            break;
+        }
+        case INSN_SCALL: {
+            if (insn.size() != 2)
+                ierror0("invalid instruction format",insnraw);
+
+            uint a = decodeint(insn.at(1),ptr+3,0xFFFFFF,true, true);
+
+            uint after_ptr = ptr+4;
+            ret.push_back(CPU_ELDB);
+            ret.push_back(0);
+            ret.push_back(0);
+
+            ret.push_back((after_ptr&0xFF0000)>>16);
+            ret.push_back((after_ptr&0xFF00)>>8);
+            ret.push_back(after_ptr&0xFF);
+
+            ret.push_back(CPU_EJMP);
+            ret.push_back(0);
+            ret.push_back(0);
+
+            ret.push_back((a&0xFF0000)>>16);
             ret.push_back((a&0xFF00)>>8);
             ret.push_back(a&0xFF);
 
