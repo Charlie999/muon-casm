@@ -40,6 +40,8 @@
 
 #define INSN_DP 33
 
+#define INSN_SUB 34
+
 #define INSN_HCF 9999
 
 #define CPU_NOP 0
@@ -76,6 +78,7 @@
 #define CPU_IRET   0x25
 #define CPU_IJMP   0x26
 #define CPU_ELDAI  0x27
+#define CPU_SUB    0x28
 
 #define CPU_CPSW 0xff
 #define CPU_INA 0xff

@@ -34,6 +34,8 @@ int stoit(const std::string& opcr) {
         return INSN_MOV;
     } else if (strcmp(opc, "add")==0) {
         return INSN_ADD;
+    } else if (strcmp(opc, "sub")==0) {
+        return INSN_SUB;
     } else if (strcmp(opc, "and")==0) {
         return INSN_AND;
     } else if (strcmp(opc, "not")==0) {
@@ -272,6 +274,17 @@ std::vector<unsigned char> assemble(const std::string& insnraw,bool movswap,std:
             uint a = decodeint(insn.at(1),ptr,0x00FFFF,true);
 
             ret.push_back(CPU_ADD);
+            ret.push_back((a&0xFF00)>>8);
+            ret.push_back(a&0xFF);
+
+            break;
+        }
+        case INSN_SUB: {
+            if (insn.size() != 2)
+                ierror0("invalid instruction format",insnraw);
+            uint a = decodeint(insn.at(1),ptr,0x00FFFF,true);
+
+            ret.push_back(CPU_SUB);
             ret.push_back((a&0xFF00)>>8);
             ret.push_back(a&0xFF);
 
