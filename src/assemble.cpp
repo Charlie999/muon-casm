@@ -199,8 +199,10 @@ void ierror1(const std::string& reason, const std::string& operand) {
 uint ptr = 0;
 
 std::vector<unsigned char> assemble(const std::string& insnraw,bool movswap,std::vector<unsigned int>* outdata) {
-    std::vector<std::string> insn = split(insnraw," ");
     std::vector<unsigned char> ret;
+    if (insnraw.c_str()[0] == ';')
+        return ret;
+    std::vector<std::string> insn = split(insnraw," ");
 
 #ifdef ENABLE_LABEL_ENGINE
     if (insnraw.c_str()[0]==':') {

@@ -10,9 +10,8 @@
 #include "../cxxopts/cxxopts.hpp"
 #include "asm.h"
 
-std::string infile;
 std::string ofile;
-std::vector<std::string> indata;
+
 std::vector<unsigned char> outbuf;
 
 #define UCODE_URL "/muon-3/ucode.bin"
@@ -58,6 +57,10 @@ int getdoublenlptr(const char *buf);
 
 int gethttpcl(char buf[10240]);
 
+void processincludes(const std::string& iname, std::vector<std::string> &indata);
+void preprocessfile(std::vector<std::string> &indata);
+void readfile(const std::string& infile, std::vector<std::string> &indata);
+
 int main(int argc, char** argv) {
 
     printf("CASM MUON-III assembler/emulator (C) Charlie 2021\n");
@@ -100,6 +103,8 @@ int main(int argc, char** argv) {
         std::cout << options.help();
         return 0;
     }
+    std::vector<std::string> indata;
+    std::string infile;
 
     if (argsresult.count("emulate"))
         mode = EMULATE;
@@ -122,35 +127,10 @@ int main(int argc, char** argv) {
             ofile.append(argsresult["output"].as<std::string>());
         }
 
-        if (!exists(infile)) {
-            printf("file doesn't exist: %s\n", infile.c_str());
-            exit(1);
-        }
 
-        printf("Reading input file %s\n", infile.c_str());
-
-        std::ifstream inf(infile.c_str());
-
-        std::string line;
-        while (std::getline(inf, line)) {
-            std::istringstream iss(line);
-            indata.push_back(line);
-        }
-
-        int san = 1;
-        while (san) {
-            int errs = 0;
-
-            for (int i = 0; i < indata.size(); i++) {
-                std::string iline = trim(indata.at(i));
-                if (iline.length() < 2 || iline.c_str()[0] == ';') {
-                    errs++;
-                    indata.erase(indata.begin() + i);
-                }
-            }
-
-            if (errs == 0) san = 0;
-        }
+        readfile(infile, indata);
+        preprocessfile(indata);
+        processincludes(infile,indata);
 
         bool movswap = argsresult.count("help")!=0;
 
@@ -425,6 +405,67 @@ int main(int argc, char** argv) {
         }
 
         return 0;
+    }
+}
+
+void readfile(const std::string& infile, std::vector<std::string> &indata) {
+    printf("reading input file %s\n", infile.c_str());
+
+    if (!exists(infile)) {
+        printf("file doesn't exist: %s\n", infile.c_str());
+        exit(1);
+    }
+
+    std::ifstream inf(infile.c_str());
+    std::string line;
+    while (std::getline(inf, line)) {
+        std::istringstream iss(line);
+        indata.push_back(line);
+    }
+    inf.close();
+}
+
+void preprocessfile(std::vector<std::string> &indata) {
+    int san = 1;
+    while (san) {
+        int errs = 0;
+
+        for (int i = 0; i < indata.size(); i++) {
+            std::string iline = trim(indata.at(i));
+            if (iline.length() < 2 || iline.c_str()[0] == ';') {
+                errs++;
+                indata.erase(indata.begin() + i);
+            }
+        }
+
+        if (errs == 0) san = 0;
+    }
+}
+
+void processincludes(const std::string& iname, std::vector<std::string> &indata) {
+    for (int i=0; i < indata.size(); i++) {
+        std::string iline = indata.at(i);
+        if (strncmp(iline.c_str(), "$include ", 9) == 0) {
+            std::string include = std::string(iline.c_str()+9);
+            if (strcmp(include.c_str(),iname.c_str()) == 0) {
+                printf("[includes] error: file cannot include itself! [%s => %s]\n",iname.c_str(),include.c_str());
+                exit(EXIT_FAILURE);
+            }
+            printf("[includes] processing include %s => %s\n",iname.c_str(),include.c_str());
+
+            std::vector<std::string> filedata;
+            readfile(include, filedata);
+            preprocessfile(filedata);
+            processincludes(include, filedata);
+
+            indata.insert(indata.begin() + i + 1, ";;;; END INCLUDE (from "+include+")");
+            for (unsigned long j = filedata.size(); j>0; j--) {
+                std::string l = filedata.at(j-1);
+                indata.insert(indata.begin() + i + 1, l);
+            }
+
+            indata.at(i) = ";;;; INCLUDED FROM " + include;
+        }
     }
 }
 
