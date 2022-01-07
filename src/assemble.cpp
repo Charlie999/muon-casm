@@ -561,13 +561,25 @@ std::vector<unsigned char> assemble(const std::string& insnraw,bool movswap,std:
         case INSN_OTB: {
             if (insn.size() != 2)
                 ierror0("invalid instruction format",insnraw);
-            uint a = decodeint(insn.at(1),ptr,0x00FFFF,true, true);
+            uint a = decodeint(insn.at(1),ptr,0x00FFFF,false);
+            if (a <= 0xFFFF) {
+                a = decodeint(insn.at(1),ptr,0x00FFFF,true, true);
+                ret.push_back(CPU_OTB);
+                ret.push_back((a&0xFF00)>>8);
+                ret.push_back(a&0xFF);
+            } else {
+                a = decodeint(insn.at(1),ptr+1,0xFFFFFF,true, true);
+                ret.push_back(CPU_EOTB);
+                ret.push_back(0);
+                ret.push_back(0);
 
-            ret.push_back(CPU_OTB);
-            ret.push_back((a&0xFF00)>>8);
-            ret.push_back(a&0xFF);
+                ret.push_back((a&0xFF0000)>>16);
+                ret.push_back((a&0xFF00)>>8);
+                ret.push_back(a&0xFF);
+            }
 
             break;
+
         }
         case INSN_LDAPTR: {
             if (insn.size() != 2)

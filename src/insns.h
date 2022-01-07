@@ -78,6 +78,7 @@
 #define CPU_IJMP   0x26
 #define CPU_ELDAI  0x27
 #define CPU_SUB    0x28
+#define CPU_EOTB   0x29
 
 #define CPU_CPSW 0xff
 #define CPU_INA 0xff
