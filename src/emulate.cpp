@@ -188,8 +188,9 @@ void emulate(const std::vector<std::string>& rmem, unsigned char* ucrom, const s
     ucf = cf;
     printf("constructing memory...\n");
 
+    int i = 0;
+
     if (!rmem.empty()) {
-        int i = 0;
         for (i = 0; i < rmem.size(); i++) {
             uint t = std::stoul(rmem.at(i), nullptr, 16);
             //dlog("memory @loc=%d : %06X\n",i,t);
