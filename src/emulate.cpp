@@ -175,8 +175,10 @@ void icheck() {
 }
 
 void setemulatormem(long p,uint m) {
-    if (p>1677216)
+    if (p>16777216) {
+        printf("cannot write to 0x%lX!\n",p);
         exit(1);
+    }
     memory[p] = m%0xFFFFFF;
 }
 
