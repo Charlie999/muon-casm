@@ -4,6 +4,7 @@
 #include <cstring>
 #include <iostream>
 #include "insns.h"
+#include "asm.h"
 
 #define ENABLE_LABEL_ENGINE
 
@@ -126,7 +127,21 @@ struct labellookup {
 std::vector<struct label> labelptrs;
 std::vector<struct labellookup> labelqueue;
 
+std::vector<gotentry> gotentries_in;
+std::vector<gotentry> gotentries_out;
+
 label* getlabel(const std::string& n) {
+    if (n.length() > 5 && memcmp(n.c_str(),"%GOT:",5)==0) {
+        std::string gotname = std::string(n.c_str() + 5);
+        for (auto ge : gotentries_in) {
+            if (strncmp(ge.fname, gotname.c_str(), 255) == 0) {
+                auto *lbl = (struct label*)malloc(sizeof(struct label));
+                memcpy(lbl->name,ge.fname,256);
+                lbl->ptr = ge.ptr;
+                return lbl;
+            }
+        }
+    }
     for (const struct label& lbl : labelptrs) {
         if (strcmp(lbl.name, n.c_str()) == 0) {
             auto *lblret = (struct label*)malloc(sizeof(struct label));
@@ -139,6 +154,7 @@ label* getlabel(const std::string& n) {
 }
 
 #define lelog(...) {printf("[labelengine] "); printf(__VA_ARGS__);}
+#define gotlog(...) {printf("[gotengine] "); printf(__VA_ARGS__);}
 
 unsigned int decodeint(std::string a, uint _ptr, uint imask, bool lookuplabels, bool enablelabels = true) {
     try {
@@ -198,6 +214,23 @@ void ierror1(const std::string& reason, const std::string& operand) {
 
 uint ptr = 0;
 
+void assembler_org(uint o, std::vector<unsigned int>* outdata) {
+    for (int i=0;i<(o*3);i++)
+        outdata->push_back(0);
+    ptr += o;
+    printf("set origin to 0x%06X\n",o);
+}
+
+void addgotentries(const std::vector<gotentry>& got) {
+    for (auto u : got)
+        gotentries_in.push_back(u);
+    gotlog("added %zu GOT entries\n",got.size());
+}
+
+const std::vector<gotentry>& getgotentries() {
+    return gotentries_out;
+}
+
 std::vector<unsigned char> assemble(const std::string& insnraw,bool movswap,std::vector<unsigned int>* outdata) {
     std::vector<unsigned char> ret;
     if (insnraw.c_str()[0] == ';')
@@ -207,6 +240,9 @@ std::vector<unsigned char> assemble(const std::string& insnraw,bool movswap,std:
 #ifdef ENABLE_LABEL_ENGINE
     if (insnraw.c_str()[0]==':') {
         std::string lblname(insnraw.c_str()+1);
+        if (lblname.length() >= 5 && memcmp(insnraw.c_str(), "%GOT:", 5)==0) {
+            ierror0("usage of reserved keyword \"%GOT:\" in label declaration\n",insnraw);
+        }
         lelog("label: %s at ptr=0x%06X\n",lblname.c_str(),ptr);
         label lbl;
         strncpy(lbl.name, std::string(lblname).c_str(), 256);
@@ -235,6 +271,23 @@ std::vector<unsigned char> assemble(const std::string& insnraw,bool movswap,std:
         return ret;
     }
 #endif
+
+    if (insnraw.c_str()[0] == '%' && insnraw.length()>5 && memcmp(insnraw.c_str(), "%GOT:", 5)==0) {
+        std::string gn = std::string(insnraw.c_str()+5);
+        label *lbl = getlabel(gn);
+        if (!lbl) {
+            gotlog("unknown label: %s\n",gn.c_str());
+            ierror0("GOT error: unknown label",insnraw);
+        }
+        uint gptr = lbl->ptr;
+        gotlog("exporting GOT entry %s [addr=0x%06X]\n",gn.c_str(),gptr);
+        gotentry ge;
+        ge.ptr = lbl->ptr;
+        strncpy(ge.fname, gn.c_str(), 255);
+        gotentries_out.push_back(ge);
+
+        return ret;
+    }
 
     int itype = stoit(insn.at(0));
 

@@ -2,7 +2,16 @@
 #ifndef CASM_ASM_H
 #define CASM_ASM_H
 
+typedef struct gotentry_t {
+    char fname[256];
+    unsigned int ptr;
+} gotentry;
+
 std::vector<unsigned char> assemble(const std::string&,bool,std::vector<unsigned int>*);
+void assembler_org(uint o, std::vector<unsigned int>* outdata);
+void addgotentries(const std::vector<gotentry>& got);
+const std::vector<gotentry>& getgotentries();
+
 std::vector<unsigned char> ucassemble(const std::vector<std::string>&);
 void emulate(const std::vector<std::string>&, unsigned char*, const std::string&, int, bool, bool, bool);
 

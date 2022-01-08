@@ -90,7 +90,10 @@ int main(int argc, char** argv) {
             ("expectediters","stop the emulator (with an error) to prevent infinite loops", cxxopts::value<int>())
             ("controlflow","dump the control flow for a program in the emulator")
             ("fetchucode","fetch the latest microcode ROM from Jenkins")
-            ("ucodesplit","split ucode into lower and upper 2K (this file is the upper 2K)", cxxopts::value<std::string>());
+            ("ucodesplit","split ucode into lower and upper 2K (this file is the upper 2K)", cxxopts::value<std::string>())
+            ("gotin","import GOT file for use in code", cxxopts::value<std::string>())
+            ("gotout","output exported GOT file", cxxopts::value<std::string>())
+            ("org","address that zero will be translated to in the assembler", cxxopts::value<int>());
 
     auto argsresult = options.parse(argc, argv);
 
@@ -127,14 +130,42 @@ int main(int argc, char** argv) {
             ofile.append(argsresult["output"].as<std::string>());
         }
 
-
         readfile(infile, indata);
         preprocessfile(indata);
         processincludes(infile,indata);
 
+        std::vector<gotentry> gotin;
+        if (argsresult.count("gotin")) {
+            std::vector<std::string> gotlines;
+            readfile(argsresult["gotin"].as<std::string>(), gotlines);
+            // GOT file format:
+            // [<fptr>]<fname>
+            // e.g.
+            // [00C000]examplefunction
+            for (const auto& l : gotlines) {
+                uint gotptr = 0;
+                char gotname[256];
+                int r = sscanf(l.c_str(), "[%X]%[^\n]s", &gotptr, gotname);
+                if (r != 2) {
+                    printf("[gotengine] error: invalid got line %s\n",l.c_str());
+                    exit(1);
+                }
+                printf("[gotengine] imported GOT entry %s [addr=0x%06X]\n",gotname,gotptr);
+                gotentry ge;
+                ge.ptr = gotptr;
+                strncpy(ge.fname, gotname, 255);
+                gotin.push_back(ge);
+            }
+        }
+        addgotentries(gotin);
+
         bool movswap = argsresult.count("help")!=0;
 
         std::vector<unsigned int> out;
+
+        if (argsresult.count("org"))
+            assembler_org(argsresult["org"].as<int>(), &out);
+
         for (auto &i : indata) {
             std::vector<unsigned char> t = assemble(i, movswap, &out);
             int q = 0;
@@ -154,6 +185,18 @@ int main(int argc, char** argv) {
         }
         assemble_resolve_final(&out);
 
+        if (argsresult.count("gotout")) {
+            std::string gn = argsresult["gotout"].as<std::string>();
+            printf("[gotengine] saving exported GOT as %s\n",gn.c_str());
+            std::ofstream wf(gn);
+            char buf[300];
+            for (auto ge : getgotentries()) {
+                snprintf(buf, 299, "[%06X]%s\n",ge.ptr,ge.fname);
+                wf.write(buf,strlen(buf));
+            }
+            wf.close();
+            printf("[gotengine] saved GOT\n");
+        }
 
         if (omode == HEX && ofile.length() == 0) {
             printf("v2.0 raw\n");

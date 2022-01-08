@@ -1,0 +1,2 @@
+[00A000]gotlabel0
+[00B000]gotlabel1

@@ -1,3 +1,9 @@
-lda 59
-$include ../ref/test.asm
-ldb 56
+:label0
+dw 0
+:label1
+dw 0
+jmp {%GOT:gotlabel0}
+
+; export labels
+%GOT:label0
+%GOT:label1
