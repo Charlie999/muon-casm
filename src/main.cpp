@@ -250,16 +250,33 @@ int main(int argc, char** argv) {
 
         printf("Reading input file %s\n", infile.c_str());
 
-        std::ifstream inf(infile.c_str());
 
-        std::string line;
-        while (std::getline(inf, line)) {
-            std::istringstream iss(line);
-            if (line.length() <= 1)
-                continue;
-            if (line.c_str()[0] == 'v')
-                continue;
-            indata.push_back(line);
+        if (omode == BINARY) {
+            std::ifstream inf(infile.c_str(),std::ios::binary);
+            unsigned char m[3];
+            char t[8];
+            long c = 0;
+            while (!inf.fail() && !inf.eof()) {
+                inf.read((char*)m, 3);
+                unsigned int assembled = (m[0] << 16) | (m[1] << 8) | m[0];
+                snprintf(t,7,"%06X\n",assembled);
+                indata.emplace_back(t);
+                c++;
+            }
+            inf.close();
+            printf("read %ld words\n",c);
+        } else {
+            std::ifstream inf(infile.c_str());
+            std::string line;
+            while (std::getline(inf, line)) {
+                std::istringstream iss(line);
+                if (line.length() <= 1)
+                    continue;
+                if (line.c_str()[0] == 'v')
+                    continue;
+                indata.push_back(line);
+            }
+            inf.close();
         }
 
         auto *ucrom = (unsigned char *) malloc(4096);
