@@ -185,7 +185,7 @@ void emulate(const std::vector<std::string>& rmem, unsigned char* ucrom, const s
     int i = 0;
     for (i=0;i<rmem.size();i++) {
         uint t = std::stoul(rmem.at(i), nullptr, 16);
-        dlog("memory @loc=%d : %06X\n",i,t);
+        //dlog("memory @loc=%d : %06X\n",i,t);
         memory[i] = t;
     }
     dlog("populated words 0x%06X - 0x%06X\n",0,i-1);
