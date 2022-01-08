@@ -15,7 +15,9 @@ void addgotentries(const std::vector<gotentry>& got);
 const std::vector<gotentry>& getgotentries();
 
 std::vector<unsigned char> ucassemble(const std::vector<std::string>&);
+
 void emulate(const std::vector<std::string>&, unsigned char*, const std::string&, int, bool, bool, bool);
+void setemulatormem(long,uint);
 
 void assemble_resolve_final(std::vector<unsigned int>*);
 

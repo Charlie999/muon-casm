@@ -174,6 +174,12 @@ void icheck() {
     }
 }
 
+void setemulatormem(long p,uint m) {
+    if (p>1677216)
+        exit(1);
+    memory[p] = m%0xFFFFFF;
+}
+
 void emulate(const std::vector<std::string>& rmem, unsigned char* ucrom, const std::string& dumpfile, int expectediters, bool dbg, bool ep, bool cf) {
     udbg = dbg;
     uep = ep;
@@ -182,13 +188,15 @@ void emulate(const std::vector<std::string>& rmem, unsigned char* ucrom, const s
     ucf = cf;
     printf("constructing memory...\n");
 
-    int i = 0;
-    for (i=0;i<rmem.size();i++) {
-        uint t = std::stoul(rmem.at(i), nullptr, 16);
-        //dlog("memory @loc=%d : %06X\n",i,t);
-        memory[i] = t;
+    if (!rmem.empty()) {
+        int i = 0;
+        for (i = 0; i < rmem.size(); i++) {
+            uint t = std::stoul(rmem.at(i), nullptr, 16);
+            //dlog("memory @loc=%d : %06X\n",i,t);
+            memory[i] = t;
+        }
+        dlog("populated words 0x%06X - 0x%06X\n", 0, i - 1);
     }
-    dlog("populated words 0x%06X - 0x%06X\n",0,i-1);
 
     estart = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 

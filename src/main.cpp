@@ -259,13 +259,13 @@ int main(int argc, char** argv) {
         if (omode == BINARY) {
             std::ifstream inf(infile.c_str(),std::ios::binary);
             unsigned char m[3];
-            char t[10];
+            if (!indata.empty())
+                indata.erase(indata.begin(), indata.end());
             long c = 0;
             while (!inf.fail() && !inf.eof()) {
                 inf.read((char*)m, 3);
                 unsigned int assembled = (m[0] << 16) | (m[1] << 8) | m[0];
-                snprintf(t,8,"%06X",assembled&0xFFFFFF);
-                indata.emplace_back(t);
+                setemulatormem(c, assembled);
                 c++;
             }
             inf.close();
