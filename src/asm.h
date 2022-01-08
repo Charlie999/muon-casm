@@ -2,13 +2,15 @@
 #ifndef CASM_ASM_H
 #define CASM_ASM_H
 
+typedef unsigned int uint;
+
 typedef struct gotentry_t {
     char fname[256];
     unsigned int ptr;
 } gotentry;
 
 std::vector<unsigned char> assemble(const std::string&,bool,std::vector<unsigned int>*);
-void assembler_org(uint o, std::vector<unsigned int>* outdata);
+void assembler_org(uint, std::vector<unsigned int>*);
 void addgotentries(const std::vector<gotentry>& got);
 const std::vector<gotentry>& getgotentries();
 
