@@ -264,7 +264,7 @@ int main(int argc, char** argv) {
             while (!inf.fail() && !inf.eof()) {
                 inf.read((char*)m, 3);
                 unsigned int assembled = (m[0] << 16) | (m[1] << 8) | m[0];
-                snprintf(t,8,"%06X\n",assembled&0xFFFFFF);
+                snprintf(t,8,"%06X",assembled&0xFFFFFF);
                 indata.emplace_back(t);
                 c++;
             }
