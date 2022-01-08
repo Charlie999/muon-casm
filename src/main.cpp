@@ -198,6 +198,12 @@ int main(int argc, char** argv) {
             printf("[gotengine] saved GOT\n");
         }
 
+        if (argsresult.count("org")) {
+            int org = argsresult["org"].as<int>();
+            for (int k=0;k<org;k++)
+                out.erase(out.begin()); // strip bytes at start, to remove the offset
+        }
+
         if (omode == HEX && ofile.length() == 0) {
             printf("v2.0 raw\n");
             for (unsigned int i : out) {
