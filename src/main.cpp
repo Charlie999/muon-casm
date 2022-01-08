@@ -200,7 +200,7 @@ int main(int argc, char** argv) {
 
         if (argsresult.count("org")) {
             int org = argsresult["org"].as<int>();
-            out.erase(out.begin(), out.begin() + (org*3))
+            out.erase(out.begin(), out.begin() + (org*3));
         }
 
         if (omode == HEX && ofile.length() == 0) {
