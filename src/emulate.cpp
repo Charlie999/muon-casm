@@ -42,8 +42,10 @@ uint load(uint addr) {
     if (addr < 0xF00000)
         addr |= smmr;
 
-    if (addr < 0xF00000 && addr > MAX_CONNECTED_SRAM)
+    if (addr < 0xF00000 && addr > MAX_CONNECTED_SRAM) {
+        dlog("write to unconnected memory at 0x%06X\n",addr);
 	return 0;
+    }
 
     dlog("LOAD @0x%06X [0x%06X]\n",addr, memory[addr]);
     if (addr >= 0xFFF800) {
