@@ -35,10 +35,15 @@ void setpswequals() {
     psw |= 0b10;
 }
 
+#define MAX_CONNECTED_SRAM 0x80000 // 512K of connected SRAM only.
+
 uint load(uint addr) {
     uchar smmr = (smm&0xF)<<17;
     if (addr < 0xF00000)
         addr |= smmr;
+
+    if (addr < 0xF00000 && addr > MAX_CONNECTED_SRAM)
+	return 0;
 
     dlog("LOAD @0x%06X [0x%06X]\n",addr, memory[addr]);
     if (addr >= 0xFFF800) {
