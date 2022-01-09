@@ -206,6 +206,7 @@ void emulate(const std::vector<std::string>& rmem, unsigned char* ucrom, const s
         dlog("populated words 0x%06X - 0x%06X\n", 0, i - 1);
     }
 
+    printf("starting emulation..\n");
     estart = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 
     while (hlt == 0) {
