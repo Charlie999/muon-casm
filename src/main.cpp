@@ -264,7 +264,7 @@ int main(int argc, char** argv) {
             long c = 0;
             while (!inf.fail() && !inf.eof()) {
                 inf.read((char*)m, 3);
-                unsigned int assembled = (m[0] << 16) | (m[1] << 8) | m[0];
+                unsigned int assembled = (m[0] << 16) | (m[1] << 8) | m[2];
                 setemulatormem(c, assembled);
                 c++;
             }
