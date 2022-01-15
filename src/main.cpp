@@ -134,7 +134,7 @@ int main(int argc, char** argv) {
         readfile(infile, indata);
         preprocessfile(indata);
         processincludes(infile,indata);
-        
+
         if (argsresult.count("dumpfixedinclude")) {
          for (auto &l : indata) {
           printf("[dumpfixedinclude]: %s\n",l.c_str());
@@ -207,7 +207,10 @@ int main(int argc, char** argv) {
 
         if (argsresult.count("org")) {
             int org = argsresult["org"].as<int>();
+	    int os = out.size()-org;
             out.erase(out.begin(), out.begin() + org);
+ 	    out.resize(os);
+ 	    out.shrink_to_fit();
         }
 
         if (omode == HEX && ofile.length() == 0) {

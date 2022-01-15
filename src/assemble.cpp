@@ -215,7 +215,7 @@ void ierror1(const std::string& reason, const std::string& operand) {
 uint ptr = 0;
 
 void assembler_org(uint o, std::vector<unsigned int>* outdata) {
-    for (int i=0;i<(o*3);i++)
+    for (int i=0;i<o;i++)
         outdata->push_back(0);
     ptr += o;
     printf("set origin to 0x%06X\n",o);
