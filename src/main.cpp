@@ -93,7 +93,8 @@ int main(int argc, char** argv) {
             ("ucodesplit","split ucode into lower and upper 2K (this file is the upper 2K)", cxxopts::value<std::string>())
             ("gotin","import GOT file for use in code", cxxopts::value<std::string>())
             ("gotout","output exported GOT file", cxxopts::value<std::string>())
-            ("org","address that zero will be translated to in the assembler", cxxopts::value<int>());
+            ("org","address that zero will be translated to in the assembler", cxxopts::value<int>())
+            ("dumpfixedinclude","dump the include-processed source file");
 
     auto argsresult = options.parse(argc, argv);
 
@@ -133,6 +134,12 @@ int main(int argc, char** argv) {
         readfile(infile, indata);
         preprocessfile(indata);
         processincludes(infile,indata);
+        
+        if (argsresult.count("dumpfixedinclude")) {
+         for (auto &l : indata) {
+          printf("[dumpfixedinclude]: %s\n",l.c_str());
+         }
+        }
 
         std::vector<gotentry> gotin;
         if (argsresult.count("gotin")) {
