@@ -799,7 +799,7 @@ std::vector<unsigned char> assemble(const std::string& insnraw,bool movswap,std:
                 ierror0("invalid instruction format",insnraw);
 
             uint a = decodeint(insn.at(1),ptr+2,0x00FFFF,true, true);
-            uint b = decodeint(insn.at(2),ptr+1,0xFFFFFF,true, true);
+            uint b = decodeint(insn.at(2),ptr+1,0x00FFFF,true, true);
 
             uint after_ptr = ptr+3;
             ret.push_back(CPU_LDB);
