@@ -4,6 +4,7 @@
 #include <thread>
 #include <cstring>
 #include <fstream>
+#include <unistd.h>
 #include "asm.h"
 #include "insns.h"
 #include "int24.h"
@@ -28,6 +29,17 @@ uchar smm = 0;
 
 uchar psw;
 
+bool kb_available() {
+  struct timeval tv;
+  fd_set fds;
+  tv.tv_sec = 0;
+  tv.tv_usec = 0;
+  FD_ZERO(&fds);
+  FD_SET(STDIN_FILENO, &fds);
+  select(STDIN_FILENO+1, &fds, NULL, NULL, &tv);
+  return (FD_ISSET(0, &fds));
+}
+
 void setpswcarry() {
     psw |= 0b1;
 }
@@ -36,6 +48,8 @@ void setpswequals() {
 }
 
 #define MAX_CONNECTED_SRAM 0x80000 // 512K of connected SRAM only.
+
+char keyboard[2] = {0,0};
 
 uint load(uint addr) {
     uchar smmr = (smm&0xF)<<17;
@@ -48,6 +62,14 @@ uint load(uint addr) {
     }
 
     dlog("LOAD @0x%06X [0x%06X]\n",addr, memory[addr]);
+
+    if (addr == 0xF00001) {
+        return keyboard[0];
+    } else if (addr == 0xF00002) {
+        keyboard[0] = 0;
+        return keyboard[1];
+    }
+
     if (addr >= 0xFFF800) {
         uint ucromaddr = addr-0xFFF800;
         return ucra[ucromaddr];
@@ -170,6 +192,11 @@ void icheck() {
         interrupt = true;
         iid = 4;
     }
+    
+    if (keyboard[0] && !interrupt) {
+        interrupt = true;
+        iid = 8;
+    }
 
     if (interrupt) {
         dlog("interrupt id=%02X\n",iid);
@@ -212,6 +239,10 @@ void emulate(const std::vector<std::string>& rmem, unsigned char* ucrom, const s
     estart = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 
     while (hlt == 0) {
+        if (kb_available() && !keyboard[0]) {
+            read(STDIN_FILENO, &keyboard[1], 1);
+            keyboard[0] = 1;
+        }
         icheck();
         fetchstart:
 
