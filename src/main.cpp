@@ -96,6 +96,7 @@ int main(int argc, char** argv) {
             ("gotin","import GOT file for use in code", cxxopts::value<std::string>())
             ("gotout","output exported GOT file", cxxopts::value<std::string>())
             ("org","address that zero will be translated to in the assembler", cxxopts::value<int>())
+            ("quiet","quiet down the assembler (don't print debug notes)")
             ("dumpfixedinclude","dump the include-processed source file");
 
     auto argsresult = options.parse(argc, argv);
@@ -132,6 +133,12 @@ int main(int argc, char** argv) {
             ofile.clear();
             ofile.append(argsresult["output"].as<std::string>());
         }
+
+        struct assembleropts opts;
+        if (argsresult.count("quiet"))
+            opts.quiet = 1;
+
+        assembler_setopts(opts);
 
         readfile(infile, indata);
         preprocessfile(indata);

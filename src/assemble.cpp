@@ -109,6 +109,11 @@ int stoit(const std::string& opcr) {
     }
 }
 
+struct assembleropts opts;
+void assembler_setopts(struct assembleropts opts_) {
+    opts = opts_;
+}
+
 bool isComma(char ch) { return ch==','; }
 
 #define uint unsigned int
@@ -153,8 +158,8 @@ label* getlabel(const std::string& n) {
     return nullptr;
 }
 
-#define lelog(...) {printf("[labelengine] "); printf(__VA_ARGS__);}
-#define gotlog(...) {printf("[gotengine] "); printf(__VA_ARGS__);}
+#define lelog(...) if(opts.quiet==0){printf("[labelengine] "); printf(__VA_ARGS__);}
+#define gotlog(...) if(opts.quiet==0){printf("[gotengine] "); printf(__VA_ARGS__);}
 
 unsigned int decodeint(std::string a, uint _ptr, uint imask, bool lookuplabels, bool enablelabels = true) {
     try {

@@ -9,6 +9,11 @@ typedef struct gotentry_t {
     unsigned int ptr;
 } gotentry;
 
+struct assembleropts {
+    bool quiet;
+};
+
+void assembler_setopts(struct assembleropts);
 std::vector<unsigned char> assemble(const std::string&,bool,std::vector<unsigned int>*);
 void assembler_org(uint, std::vector<unsigned int>*);
 void addgotentries(const std::vector<gotentry>& got);
