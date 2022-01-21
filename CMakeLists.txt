@@ -1,4 +1,15 @@
 cmake_minimum_required(VERSION 3.13)
+IF(UNIX)
+  find_program(CCACHE_PROGRAM ccache)
+  IF(CCACHE_PROGRAM)
+    set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
+  ELSE()
+    IF(MUST_USE_CCACHE)
+      message(FATAL_ERROR "ccache not found, exiting")
+    ENDIF()
+  ENDIF()
+EMDIF()
+
 project(casm)
 
 IF(ENABLE_OPTIMIZATION)
