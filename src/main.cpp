@@ -5,6 +5,8 @@
 #include <algorithm>
 #ifdef __linux__
 #include <uv.h>
+#else
+#include <winsock2.h>
 #endif
 #include <unistd.h>
 #include "../cxxopts/cxxopts.hpp"
