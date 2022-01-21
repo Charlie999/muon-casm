@@ -8,7 +8,7 @@ IF(UNIX)
       message(FATAL_ERROR "ccache not found, exiting")
     ENDIF()
   ENDIF()
-EMDIF()
+ENDIF()
 
 project(casm)
 
