@@ -30,6 +30,7 @@ set(CMAKE_CXX_STANDARD 14)
 
 IF(MSVC)
     add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+    add_compile_options("/MP4")
 ENDIF()
 
 IF(ENABLE_OPTIMIZATION)
