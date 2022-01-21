@@ -24,13 +24,19 @@ ENDIF()
 
 project(casm)
 
+set(CMAKE_CXX_STANDARD 14)
+
+IF(MSVC)
+    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+ENDIF()
+
 IF(ENABLE_OPTIMIZATION)
   set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -O2)
 ENDIF()
 
-IF(WIN32)
-  set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-Wa,-mbig-obj -static-libgcc -static-libstdc++")
-ENDIF()
+#IF(WIN32)
+#  set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-Wa,-mbig-obj -static-libgcc -static-libstdc++")
+#ENDIF()
 
 set(CMAKE_CXX_STANDARD 17)
 
