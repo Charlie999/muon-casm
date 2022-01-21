@@ -3,7 +3,7 @@ node("windows-1") {
   stage("Build CASM for Windows") {
     git url: 'https://github.com/MUON-III/muon-casm.git'
     dir("build"){
-      bat 'cmake .. -G "Unix Makefiles" -DMUST_USE_CCACHE=true -DCCACHE_PROGRAM="C:\ccache\ccache.exe"'
+      bat 'cmake .. -G "Unix Makefiles" -DMUST_USE_CCACHE=true -DCCACHE_PROGRAM="C:\\ccache\\ccache.exe"'
       bat 'make -j4'
       archiveArtifacts artifacts: 'casm.exe', fingerprint: true
       deleteDir()
