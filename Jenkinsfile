@@ -5,7 +5,7 @@ node("windows-1") {
     dir("build"){
       bat 'cmake .. -G "Visual Studio 17 2022" -A x64'
       bat 'cmake --build . --config Release -- /nologo /verbosity:minimal /maxcpucount'
-      archiveArtifacts artifacts: 'casm.exe', fingerprint: true
+      archiveArtifacts artifacts: 'Release/casm.exe', fingerprint: true
       deleteDir()
     }
     
