@@ -5,7 +5,7 @@ node("windows-1") {
     dir("build"){
       bat 'cmake ..'
       bat 'cmake --build . --config Release'
-      archiveArtifacts artifacts: 'Release/casm.exe', fingerprint: true
+      archiveArtifacts artifacts: 'casm.exe', fingerprint: true
       deleteDir()
     }
     
