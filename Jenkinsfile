@@ -4,7 +4,7 @@ node("windows-1") {
     git url: 'https://github.com/MUON-III/muon-casm.git'
     dir("build"){
       bat 'cmake ..'
-      bat 'cmake --build . --config Release'
+      bat 'cmake --build . --config Release --parallel 4'
       archiveArtifacts artifacts: 'casm.exe', fingerprint: true
       deleteDir()
     }
