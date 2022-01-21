@@ -8,6 +8,10 @@
 #include "asm.h"
 #include "insns.h"
 #include "int24.h"
+#ifdef WIN32
+#include <winsock2.h>
+#endif
+
 
 #define uchar unsigned char
 #define uint unsigned int
