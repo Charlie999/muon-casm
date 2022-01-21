@@ -4,13 +4,18 @@
 #include <thread>
 #include <cstring>
 #include <fstream>
+#include <stdio.h>
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
 #include <unistd.h>
+#else
+#include <winsock2.h>
+#include <io.h>
+#define STDIN_FILENO _fileno(stdin)
+#endif
+
 #include "asm.h"
 #include "insns.h"
 #include "int24.h"
-#ifdef WIN32
-#include <winsock2.h>
-#endif
 
 
 #define uchar unsigned char
@@ -21,9 +26,9 @@ bool udbg = false;
 
 unsigned char *ucra = nullptr;
 
-#define log(args...) if (!uep) {printf(args);}
-#define alog(args...) {printf(args);}
-#define dlog(args...) if(udbg && !uep) {printf(args);}
+#define log(...) if (!uep) {printf(__VA_ARGS__);}
+#define alog(...) {printf(__VA_ARGS__);}
+#define dlog(...) if(udbg && !uep) {printf(__VA_ARGS__);}
 
 uint memory[16777215];
 

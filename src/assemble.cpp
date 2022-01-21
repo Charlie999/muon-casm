@@ -6,12 +6,16 @@
 #include "insns.h"
 #include "asm.h"
 
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
+#define UNIX
+#endif
+
 #define ENABLE_LABEL_ENGINE
 
 std::vector<std::string> split(const std::string& s, const std::string& delim) {
     std::vector<std::string> ret;
 
-    auto start = 0U;
+    size_t start = 0U;
     auto end = s.find(delim);
     while (end != std::string::npos)
     {
@@ -28,83 +32,121 @@ int stoit(const std::string& opcr) {
     std::string opc_ = std::string(opcr);
     std::transform(opc_.begin(), opc_.end(), opc_.begin(),
                    [](unsigned char c){ return std::tolower(c); });
-    char opc[opc_.length()+1];
+    //char opc[opc_.length()+1];
+    char *opc = (char*)malloc(opc_.length() + 1);
     opc[opc_.length()] = 0;
     strcpy(opc, opc_.c_str());
     if (strcmp(opc, "mov")==0) {
+	free(opc);
         return INSN_MOV;
     } else if (strcmp(opc, "add")==0) {
+	free(opc);
         return INSN_ADD;
     } else if (strcmp(opc, "sub")==0) {
+	free(opc);
         return INSN_SUB;
     } else if (strcmp(opc, "and")==0) {
+	free(opc);
         return INSN_AND;
     } else if (strcmp(opc, "not")==0) {
+	free(opc);
         return INSN_NOT;
     } else if (strcmp(opc, "or")==0) {
+	free(opc);
         return INSN_OR;
     } else if (strcmp(opc, "xor")==0) {
+	free(opc);
         return INSN_XOR;
     } else if (strcmp(opc, "shla")==0) {
+	free(opc);
         return INSN_SHLA;
     } else if (strcmp(opc, "shra")==0) {
+	free(opc);
         return INSN_SHRA;
     } else if (strcmp(opc, "ina")==0) {
+	free(opc);
         return INSN_INA;
     } else if (strcmp(opc, "inb")==0) {
+	free(opc);
         return INSN_INB;
     } else if (strcmp(opc, "jmp")==0) {
+	free(opc);
         return INSN_JMP;
     } else if (strcmp(opc, "lda")==0) {
+	free(opc);
         return INSN_LDA;
     } else if (strcmp(opc, "ldb")==0) {
+	free(opc);
         return INSN_LDB;
     } else if (strcmp(opc, "elda")==0) {
+	free(opc);
         return INSN_ELDA;
     } else if (strcmp(opc, "eldb")==0) {
+	free(opc);
         return INSN_ELDB;
     } else if (strcmp(opc, "ldbi")==0) {
+	free(opc);
         return INSN_LDBI;
     } else if (strcmp(opc, "ldai")==0) {
+	free(opc);
         return INSN_LDAI;
     } else if (strcmp(opc, "ota")==0) {
+	free(opc);
         return INSN_OTA;
     } else if (strcmp(opc, "otb")==0) {
+	free(opc);
         return INSN_OTB;
     } else if (strcmp(opc, "ldaptr")==0) {
+	free(opc);
         return INSN_LDAPTR;
     } else if (strcmp(opc, "otaptr")==0) {
+	free(opc);
         return INSN_OTAPTR;
     } else if (strcmp(opc, "dec")==0) {
+	free(opc);
         return INSN_DEC;
     } else if (strcmp(opc, "brch")==0) {
+	free(opc);
         return INSN_BRCH;
     } else if (strcmp(opc, "cmp")==0) {
+	free(opc);
         return INSN_CMP;
     } else if (strcmp(opc, "dw")==0) {
+	free(opc);
         return INSN_DW;
     } else if (strcmp(opc, "ds")==0) {
+	free(opc);
         return INSN_DS;
     } else if (strcmp(opc, "dp")==0) {
+	free(opc);
         return INSN_DP;
     } else if (strcmp(opc, "cmpbh")==0) {
+	free(opc);
         return INSN_CMPBH;
     } else if (strcmp(opc, "iret")==0) {
+	free(opc);
         return INSN_IRET;
     } else if (strcmp(opc, "hcf")==0) {
+	free(opc);
         return INSN_HCF;
     } else if (strcmp(opc, "ie")==0) {
+	free(opc);
         return INSN_IE;
     } else if (strcmp(opc, "smm")==0) {
+	free(opc);
         return INSN_SMM;
     } else if (strcmp(opc, "call")==0) {
+	free(opc);
         return INSN_CALL;
     } else if (strcmp(opc, "scall")==0) {
+	free(opc);
         return INSN_SCALL;
     } else if (strcmp(opc, "ijmp")==0) {
+	free(opc);
         return INSN_IJMP;
     } else {
         printf("Unknown instruction [%s]\n",opc);
+	free(opc);
         exit(1);
     }
 }
@@ -192,10 +234,11 @@ unsigned int decodeint(std::string a, uint _ptr, uint imask, bool lookuplabels, 
             }
 #endif
 
-            char sr[a.length() - 2];
+            char *sr = (char*)malloc(a.length() - 2); //char sr[a.length() - 2];
             sr[a.length() - 2] = 0;
             memcpy(sr, a.c_str() + 2, a.length() - 2);
             s = std::string(sr);
+	    free(sr);
         }
         if (a[0] == '0' && a[1] == 'x')
             return std::stoul(s, nullptr, 16);
@@ -497,11 +540,12 @@ std::vector<unsigned char> assemble(const std::string& insnraw,bool movswap,std:
             std::string str(insnraw.c_str()+3);
 
             int len = ((str.length()%3)>1?((str.length()/3)+1):(str.length()/3) + (str.length()%3)) * 3;
-            char sd[len];
+            char *sd = (char*)malloc(len); //char sd[len];
             memset(sd, 0, len);
             memcpy(sd, str.c_str(), str.length());
             for (int i=0;i<len;i++)
                 ret.push_back(sd[i]);
+	    free(sd);
 
             break;
         }
@@ -514,7 +558,7 @@ std::vector<unsigned char> assemble(const std::string& insnraw,bool movswap,std:
             std::string str(insnraw.c_str()+3);
 
             int len = ((str.length()%3)>1?((str.length()/3)+1):(str.length()/3) + (str.length()%3)) * 3;
-            char sd[len];
+            char *sd = (char*)malloc(len); //char sd[len];
             memset(sd, 0, len);
             memcpy(sd, str.c_str(), str.length());
             for (int i=0;i<len;i++) {
@@ -525,6 +569,7 @@ std::vector<unsigned char> assemble(const std::string& insnraw,bool movswap,std:
             ret.push_back(0);
             ret.push_back(0);
             ret.push_back(0);
+	    free(sd);
 
             break;
         }

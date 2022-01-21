@@ -5,10 +5,12 @@
 #include <algorithm>
 #ifdef __linux__
 #include <uv.h>
-#else
-#include <winsock2.h>
-#endif
 #include <unistd.h>
+#else
+#include <functional>
+#include <winsock2.h>
+#include <io.h>
+#endif
 #include "../cxxopts/cxxopts.hpp"
 #include "asm.h"
 
@@ -24,18 +26,31 @@ inline bool exists(const std::string& name) {
     return f.good();
 }
 
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
 static inline std::string &ltrim(std::string &s) {
     s.erase(s.begin(), std::find_if(s.begin(), s.end(),
                                     std::not1(std::ptr_fun<int, int>(std::isspace))));
     return s;
 }
-
-// trim from end
 static inline std::string &rtrim(std::string &s) {
     s.erase(std::find_if(s.rbegin(), s.rend(),
                          std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
     return s;
 }
+#else
+static inline std::string &ltrim(std::string &s) {
+    s.erase(s.begin(), std::find_if(s.begin(), s.end(),
+        std::not_fn(static_cast<int(*)(int)>(std::isspace))));
+    return s;
+}
+static inline std::string &rtrim(std::string &s) {
+    s.erase(std::find_if(s.rbegin(), s.rend(), [](unsigned char ch) {
+        return !std::isspace(ch);
+    }).base(), s.end());
+    return s;
+}
+#endif
+
 
 // trim from both ends
 static inline std::string &trim(std::string &s) {
