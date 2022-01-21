@@ -22,7 +22,7 @@ node("master") {
     }
     git url: 'https://github.com/MUON-III/muon-casm.git'
     dir("build"){
-      sh 'cmake .. -DVERSION=latest -DBUILD_STATIC=true'
+      sh 'cmake .. -DVERSION=latest -DBUILD_STATIC=true -DMUST_USE_CCACHE=true'
       sh 'make -j4'
       archiveArtifacts artifacts: 'casm-static*', fingerprint: true
       deleteDir()
