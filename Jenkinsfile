@@ -5,7 +5,7 @@ node("windows-1") {
     dir("build"){
       bat 'cmake .. -DMUST_USE_CCACHE=true -DCCACHE_PROGRAM="C:\\ccache\\ccache.exe"'
       bat 'cmake --build . --config Release'
-      archiveArtifacts artifacts: 'Release\casm.exe', fingerprint: true
+      archiveArtifacts artifacts: 'Release/casm.exe', fingerprint: true
       deleteDir()
     }
     
