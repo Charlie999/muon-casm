@@ -18,7 +18,7 @@ node("master") {
   stage("Build CASM-STATIC for Linux") {
     environment {
       CC  = '/usr/lib/ccache/gcc'
-      CXX = '/usr/lib/ccache/g++
+      CXX = '/usr/lib/ccache/g++'
     }
     git url: 'https://github.com/MUON-III/muon-casm.git'
     dir("build"){
