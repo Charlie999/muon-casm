@@ -4,7 +4,7 @@ node("windows-1") {
     git url: 'https://github.com/MUON-III/muon-casm.git'
     dir("build"){
       bat 'cmake .. -G "Unix Makefiles"'
-      bat 'make'
+      bat 'make -j4'
       archiveArtifacts artifacts: 'casm.exe', fingerprint: true
       deleteDir()
     }
@@ -19,7 +19,7 @@ node("master") {
     git url: 'https://github.com/MUON-III/muon-casm.git'
     dir("build"){
       sh 'cmake .. -DVERSION=latest -DBUILD_STATIC=true'
-      sh 'make'
+      sh 'make -j4'
       archiveArtifacts artifacts: 'casm-static*', fingerprint: true
       deleteDir()
     }
