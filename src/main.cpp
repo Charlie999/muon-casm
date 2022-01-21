@@ -112,6 +112,7 @@ int main(int argc, char** argv) {
             ("gotout","output exported GOT file", cxxopts::value<std::string>())
             ("org","address that zero will be translated to in the assembler", cxxopts::value<int>())
             ("quiet","quiet down the assembler (don't print debug notes)")
+            ("resolveafter","only resolve labels post-assembly, will improve compile time but sacrifice code size")
             ("dumpfixedinclude","dump the include-processed source file");
 
     auto argsresult = options.parse(argc, argv);
@@ -150,8 +151,11 @@ int main(int argc, char** argv) {
         }
 
         struct assembleropts opts;
+        memset((void*)&opts, 0, sizeof(opts));
         if (argsresult.count("quiet"))
             opts.quiet = 1;
+        if (argsresult.count("resolveafter"))
+            opts.onlyresolveafter = 1;
 
         assembler_setopts(opts);
 

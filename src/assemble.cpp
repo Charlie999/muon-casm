@@ -214,6 +214,14 @@ unsigned int decodeint(std::string a, uint _ptr, uint imask, bool lookuplabels, 
                 std::string lblname(t.c_str() + 1);
                 lblname.pop_back();
                 lelog("get label %s\n", lblname.c_str());
+                if (opts.onlyresolveafter && enablelabels) {
+                    labellookup llk;
+                    strncpy(llk.name, lblname.c_str(), 256);
+                    llk.ptr = _ptr;
+                    llk.mask = imask;
+                    labelqueue.push_back(llk);
+                    return 0xFFFFFFE2;
+                }
                 label *lbl = getlabel(lblname);
                 if (!lbl) {
                     lelog("label %s not found\n", lblname.c_str());
@@ -225,7 +233,7 @@ unsigned int decodeint(std::string a, uint _ptr, uint imask, bool lookuplabels, 
                     llk.ptr = _ptr;
                     llk.mask = imask;
                     labelqueue.push_back(llk);
-                    return 0;
+                    return 0xFFFFFFE1;
                 }
                 lelog("got label ptr for %s: 0x%06X\n", lblname.c_str(), lbl->ptr);
                 uint ptr = lbl->ptr;
