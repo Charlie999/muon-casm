@@ -61,6 +61,11 @@ void setpswequals() {
 char keyboard[2] = {0,0};
 
 uint load(uint addr) {
+    if (addr > 0xFFFFFF) {
+	printf("error: cannot load outside memory! addr=0x%08X\n",addr);
+	exit(1);
+    }
+	
     uchar smmr = (smm&0xF)<<17;
     if (addr < 0xF00000)
         addr |= smmr;
@@ -87,6 +92,10 @@ uint load(uint addr) {
 }
 
 void store(uint addr, uint data) {
+    if (addr > 0xFFFFFF) {
+	printf("error: cannot store outside memory! addr=0x%08X\n",addr);
+	exit(1);
+    }
     uchar smmr = (smm&0xF)<<17;
     if (addr < 0xF00000)
         addr |= smmr;
