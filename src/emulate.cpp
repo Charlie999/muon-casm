@@ -10,6 +10,7 @@
 #else
 #include <winsock2.h>
 #include <io.h>
+#include <conio.h>
 #define STDIN_FILENO _fileno(stdin)
 #endif
 
@@ -265,7 +266,12 @@ void emulate(const std::vector<std::string>& rmem, unsigned char* ucrom, const s
         if (kb_available() && !keyboard[0]) {
             read(STDIN_FILENO, &keyboard[1], 1);
             keyboard[0] = 1;
-        }
+	}
+#else
+	if (kbhit() && !keyboard[0]) {
+            read(STDIN_FILENO, &keyboard[1], 1);
+            keyboard[0] = 1;
+	}   
 #endif
         icheck();
         fetchstart:
