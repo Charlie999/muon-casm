@@ -30,7 +30,7 @@ unsigned char *ucra = nullptr;
 #define alog(...) {printf(__VA_ARGS__);}
 #define dlog(...) if(udbg && !uep) {printf(__VA_ARGS__);}
 
-uint memory[16777215];
+uint memory[16777216];
 
 uint PC = 0;
 
