@@ -235,6 +235,7 @@ void emulate(const std::vector<std::string>& rmem, unsigned char* ucrom, const s
 
     int i = 0;
 
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
     if (!rmem.empty()) {
         for (i = 0; i < rmem.size(); i++) {
             uint t = std::stoul(rmem.at(i), nullptr, 16);
@@ -243,6 +244,7 @@ void emulate(const std::vector<std::string>& rmem, unsigned char* ucrom, const s
         }
         dlog("populated words 0x%06X - 0x%06X\n", 0, i - 1);
     }
+#endif
 
     printf("starting emulation..\n");
     estart = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
