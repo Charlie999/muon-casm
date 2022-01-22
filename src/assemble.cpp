@@ -233,7 +233,7 @@ unsigned int decodeint(std::string a, uint _ptr, uint imask, bool lookuplabels, 
                     llk.ptr = _ptr;
                     llk.mask = imask;
                     labelqueue.push_back(llk);
-                    return 0xFFFFFFE1;
+                    return 0;
                 }
                 lelog("got label ptr for %s: 0x%06X\n", lblname.c_str(), lbl->ptr);
                 uint ptr = lbl->ptr;
@@ -952,5 +952,12 @@ void assemble_resolve_final(std::vector<unsigned int>* outdata) {
     }
 
     lelog("all labels resolved.\n");
+
+    if (opts.dumplabels) {
+        printf("=== LABELS ===\n");
+        for (auto lbl : labelptrs)
+            printf(" => %s:0x%06X\n",lbl.name, lbl.ptr);
+        printf("==============\n");
+    }
 #endif
 }

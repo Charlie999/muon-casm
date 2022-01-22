@@ -113,6 +113,7 @@ int main(int argc, char** argv) {
             ("org","address that zero will be translated to in the assembler", cxxopts::value<int>())
             ("quiet","quiet down the assembler (don't print debug notes)")
             ("resolveafter","only resolve labels post-assembly, will improve compile time but sacrifice code size")
+            ("dumplabels","dump all labels after processing")
             ("dumpfixedinclude","dump the include-processed source file");
 
     auto argsresult = options.parse(argc, argv);
@@ -156,6 +157,8 @@ int main(int argc, char** argv) {
             opts.quiet = 1;
         if (argsresult.count("resolveafter"))
             opts.onlyresolveafter = 1;
+        if (argsresult.count("dumplabels"))
+            opts.dumplabels = 1;
 
         assembler_setopts(opts);
 
@@ -235,10 +238,10 @@ int main(int argc, char** argv) {
 
         if (argsresult.count("org")) {
             int org = argsresult["org"].as<int>();
-	    int os = out.size()-org;
+	        int os = out.size()-org;
             out.erase(out.begin(), out.begin() + org);
- 	    out.resize(os);
- 	    out.shrink_to_fit();
+ 	        out.resize(os);
+ 	        out.shrink_to_fit();
         }
 
         if (omode == HEX && ofile.length() == 0) {

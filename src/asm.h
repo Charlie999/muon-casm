@@ -12,6 +12,7 @@ typedef struct gotentry_t {
 struct assembleropts {
     bool quiet;
     bool onlyresolveafter;
+    bool dumplabels;
 };
 
 void assembler_setopts(struct assembleropts);
