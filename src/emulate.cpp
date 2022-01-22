@@ -10,6 +10,7 @@
 #else
 #include <winsock2.h>
 #include <io.h>
+#include <conio.h>
 #define STDIN_FILENO _fileno(stdin)
 #endif
 
@@ -30,7 +31,9 @@ unsigned char *ucra = nullptr;
 #define alog(...) {printf(__VA_ARGS__);}
 #define dlog(...) if(udbg && !uep) {printf(__VA_ARGS__);}
 
-uint memory[16777215];
+uint memory[16777216];
+
+void emufinish(int code);
 
 uint PC = 0;
 
@@ -61,6 +64,11 @@ void setpswequals() {
 char keyboard[2] = {0,0};
 
 uint load(uint addr) {
+    if (addr > 0xFFFFFF) {
+	printf("error: cannot load outside memory! addr=0x%08X\n",addr);
+	emufinish(1);
+    }
+	
     uchar smmr = (smm&0xF)<<17;
     if (addr < 0xF00000)
         addr |= smmr;
@@ -87,6 +95,10 @@ uint load(uint addr) {
 }
 
 void store(uint addr, uint data) {
+    if (addr > 0xFFFFFF) {
+	printf("error: cannot store outside memory! addr=0x%08X\n",addr);
+	emufinish(1);
+    }
     uchar smmr = (smm&0xF)<<17;
     if (addr < 0xF00000)
         addr |= smmr;
@@ -116,9 +128,9 @@ void store(uint addr, uint data) {
     memory[addr] = data&0xFFFFFF;
 }
 
-uchar hlt;
+uchar hlt = 0;
 
-int A,B;
+int A=0,B=0;
 
 uint iar = 0;
 
@@ -235,6 +247,7 @@ void emulate(const std::vector<std::string>& rmem, unsigned char* ucrom, const s
 
     int i = 0;
 
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
     if (!rmem.empty()) {
         for (i = 0; i < rmem.size(); i++) {
             uint t = std::stoul(rmem.at(i), nullptr, 16);
@@ -243,15 +256,24 @@ void emulate(const std::vector<std::string>& rmem, unsigned char* ucrom, const s
         }
         dlog("populated words 0x%06X - 0x%06X\n", 0, i - 1);
     }
+#endif
 
     printf("starting emulation..\n");
     estart = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 
     while (hlt == 0) {
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
         if (kb_available() && !keyboard[0]) {
             read(STDIN_FILENO, &keyboard[1], 1);
             keyboard[0] = 1;
-        }
+	}
+#else
+	if (kbhit() && !keyboard[0]) {
+            //read(STDIN_FILENO, &keyboard[1], 1);
+	    keyboard[1] = getch();
+            keyboard[0] = 1;
+	}   
+#endif
         icheck();
         fetchstart:
 
