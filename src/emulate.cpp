@@ -127,9 +127,9 @@ void store(uint addr, uint data) {
     memory[addr] = data&0xFFFFFF;
 }
 
-uchar hlt;
+uchar hlt = 0;
 
-int A,B;
+int A=0,B=0;
 
 uint iar = 0;
 
@@ -261,10 +261,12 @@ void emulate(const std::vector<std::string>& rmem, unsigned char* ucrom, const s
     estart = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 
     while (hlt == 0) {
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
         if (kb_available() && !keyboard[0]) {
             read(STDIN_FILENO, &keyboard[1], 1);
             keyboard[0] = 1;
         }
+#endif
         icheck();
         fetchstart:
 
