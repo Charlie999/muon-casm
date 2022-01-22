@@ -32,6 +32,8 @@ unsigned char *ucra = nullptr;
 
 uint memory[16777216];
 
+void emufinish(int code);
+
 uint PC = 0;
 
 uchar smm = 0;
@@ -63,7 +65,7 @@ char keyboard[2] = {0,0};
 uint load(uint addr) {
     if (addr > 0xFFFFFF) {
 	printf("error: cannot load outside memory! addr=0x%08X\n",addr);
-	exit(1);
+	emufinish(1);
     }
 	
     uchar smmr = (smm&0xF)<<17;
@@ -94,7 +96,7 @@ uint load(uint addr) {
 void store(uint addr, uint data) {
     if (addr > 0xFFFFFF) {
 	printf("error: cannot store outside memory! addr=0x%08X\n",addr);
-	exit(1);
+	emufinish(1);
     }
     uchar smmr = (smm&0xF)<<17;
     if (addr < 0xF00000)
