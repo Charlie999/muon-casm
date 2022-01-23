@@ -16,56 +16,59 @@ int ucstoit(const std::string& opcr) {
     opc[opc_.length()] = 0;
     strcpy(opc, opc_.c_str());
     if (strcmp(opc, "nop")==0) {
-	free(opc);
+	    free(opc);
         return UC_NOP;
     } else if (strcmp(opc, "ld")==0) {
-	free(opc);
+	    free(opc);
         return UC_LD;
     } else if (strcmp(opc, "aw")==0 || strcmp(opc, "lda")==0) {
-	free(opc);
+	    free(opc);
         return UC_AW;
     } else if (strcmp(opc, "bw")==0 || strcmp(opc, "ldb")==0) {
-	free(opc);
+	    free(opc);
         return UC_BW;
     } else if (strcmp(opc, "smm")==0) {
-	free(opc);
+	    free(opc);
         return UC_SMM;
     } else if (strcmp(opc, "la")==0) {
-	free(opc);
+	    free(opc);
         return UC_LA;
     } else if (strcmp(opc, "awi")==0) {
-	free(opc);
+	    free(opc);
         return UC_AWI;
     } else if (strcmp(opc, "bwi")==0) {
-	free(opc);
+	    free(opc);
         return UC_BWI;
     } else if (strcmp(opc, "pswc")==0) {
-	free(opc);
+    	free(opc);
         return UC_PSWC;
     } else if (strcmp(opc, "pcw")==0) {
-	free(opc);
+    	free(opc);
         return UC_PCW;
     } else if (strcmp(opc, "bchk")==0) {
-	free(opc);
+	    free(opc);
         return UC_BCHK;
     } else if (strcmp(opc, "alu")==0) {
-	free(opc);
+	    free(opc);
         return UC_ALU;
     } else if (strcmp(opc, "alul")==0) {
-	free(opc);
+	    free(opc);
         return UC_ALUL;
     } else if (strcmp(opc, "ie")==0) {
-	free(opc);
+	    free(opc);
         return UC_IE;
+    } else if (strcmp(opc, "sfi")==0) {
+	    free(opc);
+        return UC_SFI;
     } else if (strcmp(opc, "end")==0) {
-	free(opc);
+	    free(opc);
         return UC_END;
     } else if (opc[0] == ':') {
-	free(opc);
+	    free(opc);
         return UCASM_SETINSN;
     } else {
         printf("Unknown instruction [%s]\n",opc);
-	free(opc);
+	    free(opc);
         exit(1);
     }
 }
