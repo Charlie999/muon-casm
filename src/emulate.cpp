@@ -336,10 +336,10 @@ void emulate(const std::vector<std::string>& rmem, unsigned char* ucrom, const s
             keyboard[0] = 1;
 	}
 #else
-	if (kbhit() && !keyboard[0]) {
+	if (_kbhit() && !keyboard[0]) {
             //read(STDIN_FILENO, &keyboard[1], 1);
-	    keyboard[1] = getch();
-            keyboard[0] = 1;
+	    keyboard[1] = _getch();
+        keyboard[0] = 1;
 	}   
 #endif
         icheck();
@@ -497,7 +497,7 @@ void emulate(const std::vector<std::string>& rmem, unsigned char* ucrom, const s
         }
 
         iters++;
-        if (iters > expectediters && expectediters > 0) {
+        if (iters > (uint)expectediters && expectediters > 0) {
             log("exceeded expected iters, emulator exiting.\n");
             emufinish(-1);
         }
