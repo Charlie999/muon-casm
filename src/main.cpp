@@ -431,6 +431,7 @@ int main(int argc, char** argv) {
             }
             fseek(fp, 0, SEEK_SET);
             msptr = (void*)malloc(0xFFFFFF * sizeof(uint));
+            memset(msptr, 0, 0xFFFFFF * sizeof(uint));
             emulator_set_mass_storage_reg((unsigned int*)msptr);
             size_t read = 0;
             unsigned char* mspre = (unsigned char*)malloc(loadsize);
