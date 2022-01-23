@@ -28,7 +28,7 @@ project(casm)
 
 IF(MSVC)
   add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-  add_compile_options("/MP4")
+  add_compile_options("/MP4 /std:c++20")
   set(CMAKE_CXX_STANDARD 20)
 ELSE()
   set(CMAKE_CXX_STANDARD 14)

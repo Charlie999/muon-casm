@@ -4,7 +4,7 @@ node("windows-1") {
     git url: 'https://github.com/MUON-III/muon-casm.git'
     dir("build"){
       bat 'cmake .. -G "Visual Studio 17 2022" -A x64'
-      bat 'cmake --build . --config Release -- /nologo /verbosity:minimal /maxcpucount /std:c++20'
+      bat 'cmake --build . --config Release -- /nologo /verbosity:minimal /maxcpucount'
       archiveArtifacts artifacts: 'Release/casm.exe', fingerprint: true
       deleteDir()
     }
