@@ -42,8 +42,6 @@ ENDIF()
 #  set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-Wa,-mbig-obj -static-libgcc -static-libstdc++")
 #ENDIF()
 
-set(CMAKE_CXX_STANDARD 17)
-
 IF(USE_GIT_VERSION)
   execute_process(COMMAND git log --pretty=format:'%h' -n 1
           OUTPUT_VARIABLE GIT_REV
