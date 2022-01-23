@@ -25,6 +25,7 @@ std::vector<unsigned char> ucassemble(const std::vector<std::string>&);
 
 void emulate(const std::vector<std::string>&, unsigned char*, const std::string&, int, bool, bool, bool);
 void setemulatormem(long,uint);
+void emulator_set_mass_storage_reg(uint* arr);
 
 void assemble_resolve_final(std::vector<unsigned int>*);
 

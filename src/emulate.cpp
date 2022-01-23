@@ -33,6 +33,35 @@ unsigned char *ucra = nullptr;
 
 uint memory[16777216];
 
+#define MASS_STORAGE_META_ADDR  0xF00FF0
+#define MASS_STORAGE_START_ADDR 0xF01000
+#define MASS_STORAGE_END_ADDR   0xF11000
+#define MASS_STORAGE_CAPACITY   0x1000000
+
+#define MASS_STORAGE_META_DEVTYPE   (MASS_STORAGE_META_ADDR)
+#define MASS_STORAGE_META_CAPACITY  (MASS_STORAGE_META_ADDR + 1)
+#define MASS_STORAGE_META_BANK      (MASS_STORAGE_META_ADDR + 2)
+
+#define DEVTYPE_MASS_STORAGE 1
+
+uint *storage = NULL;
+void emulator_set_mass_storage_reg(uint* arr) {
+    storage = arr;
+}
+
+struct mass_storage_meta_t {
+    uint devtype;
+    uint capacity;
+    uint bank;
+    uint rsvd[13];
+};
+
+struct mass_storage_meta_t storageopts = {
+    .devtype = DEVTYPE_MASS_STORAGE,
+    .capacity = MASS_STORAGE_CAPACITY,
+    .bank = 0,
+};
+
 void emufinish(int code);
 
 uint PC = 0;
@@ -91,6 +120,29 @@ uint load(uint addr) {
         uint ucromaddr = addr-0xFFF800;
         return ucra[ucromaddr];
     }
+
+    if (addr >= MASS_STORAGE_META_ADDR && addr <= MASS_STORAGE_END_ADDR && storage) {
+        if (addr < MASS_STORAGE_START_ADDR) {
+            switch (addr) {
+                case MASS_STORAGE_META_ADDR:
+                    return storageopts.devtype;
+                case MASS_STORAGE_META_ADDR + 1:
+                    return storageopts.capacity;
+                case MASS_STORAGE_META_ADDR + 2:
+                    return storageopts.bank;
+                default:
+                    printf("storageopts word offset 0x%X is undefined.\n",addr - MASS_STORAGE_META_ADDR);
+                    ierror0("Invalid storage device metadata ROM read\n","[EMULATOR=>store()=>{MASS_STORAGE}]");
+                    return 0;
+            }
+        } else {
+            uint saddr = addr - MASS_STORAGE_START_ADDR;
+            saddr |= storageopts.bank << 16;
+            uint data = storage[saddr];
+            printf("STORAGE  READ %02X:%04X DATA=0x%06X\n",storageopts.bank,saddr&0xFFFF,data);
+            return data;
+        }
+    }
     return memory[addr];
 }
 
@@ -104,6 +156,8 @@ void store(uint addr, uint data) {
         addr |= smmr;
 
     if (addr >= 0xFFFFFF) ierror0("Invalid memory write", "[EMULATOR=>store()]");
+
+    data &= 0xFFFFFF;
 
     dlog("STORE @0x%06X [0x%06X]\n",addr, data);
     if (addr >= 0xFFF800) {
@@ -124,8 +178,22 @@ void store(uint addr, uint data) {
     } else if (addr == 0xF00002) {
         printf("TERMINAL_WRITE_NUM: %d\n",int24::fromuint(data).operator int());
         return;
+    } else if (addr >= MASS_STORAGE_META_ADDR && addr <= MASS_STORAGE_END_ADDR && storage) {
+        if (addr < MASS_STORAGE_START_ADDR) {
+            if (addr == MASS_STORAGE_META_BANK) {
+                storageopts.bank = data;
+            } else {
+                ierror0("Cannot write to MASS_STORAGE_META_* ROM sections\n","[EMULATOR=>store()=>{MASS_STORAGE}]");
+            }
+        } else {
+            uint saddr = addr - MASS_STORAGE_START_ADDR;
+            saddr |= storageopts.bank << 16;
+            storage[saddr] = data;
+            printf("STORAGE WRITE %02X:%04X DATA=0x%06X\n",storageopts.bank,saddr&0xFFFF,data);
+        }
+        return;
     }
-    memory[addr] = data&0xFFFFFF;
+    memory[addr] = data;
 }
 
 uchar hlt = 0;

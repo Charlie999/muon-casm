@@ -100,6 +100,7 @@ int main(int argc, char** argv) {
             ("p,emuprint", "transparent terminal printing from emulator (disables normal emulator logging)")
             ("i,input", "set input file", cxxopts::value<std::string>())
             ("o,output", "set output file", cxxopts::value<std::string>())
+            ("s,storage","set contents of emulator storage (max 48MiB/16Mwords)", cxxopts::value<std::string>())
             ("binary","output ref in binary format")
             ("movswap","swap mov operands")
             ("ucrom","ucode ROM for emulation", cxxopts::value<std::string>())
@@ -413,6 +414,41 @@ int main(int argc, char** argv) {
             ucs.close();
         }
 
+        void* msptr = NULL;
+        if (argsresult.count("storage")) {
+            std::string sfile = argsresult["storage"].as<std::string>();
+            if (!exists(sfile)) {
+                printf("file doesn't exist: %s\n", sfile.c_str());
+                exit(1);
+            }
+            FILE* fp = fopen(sfile.c_str(), "rb");
+            fseek(fp, 0, SEEK_END);
+            uint loadsize = ftell(fp);
+            if (loadsize > 0x2FFFFFD) loadsize = 0x2FFFFFD;
+            if ((loadsize % 3) != 0) {
+                printf("file size not multiple of word size!\n");
+                exit(1);
+            }
+            fseek(fp, 0, SEEK_SET);
+            msptr = (void*)malloc(0xFFFFFF * sizeof(uint));
+            emulator_set_mass_storage_reg((unsigned int*)msptr);
+            size_t read = 0;
+            unsigned char* mspre = (unsigned char*)malloc(loadsize);
+            if ((read = fread(mspre, 3, loadsize/3, fp)) != loadsize/3) {
+                printf("error reading storage ROM: only read %lu/%d blocks\n",read,loadsize/3);
+                exit(1);
+            } 
+            for (int i=0;i<(loadsize/3);i++) {
+                ((uint*)msptr)[i] = 0;
+                ((uint*)msptr)[i] |= (mspre[(i*3)] << 16);
+                ((uint*)msptr)[i] |= (mspre[(i*3)+1] << 8);
+                ((uint*)msptr)[i] |= mspre[(i*3)+2];
+            }
+            free(mspre);
+            printf("read %d bytes (%d words) into storage\n",loadsize,loadsize/3);
+            fclose(fp);
+        }
+
         std::string cdf;
         if (argsresult.count("coredump"))
             cdf = argsresult["coredump"].as<std::string>();
@@ -420,6 +456,8 @@ int main(int argc, char** argv) {
         if (argsresult.count("expectediters"))
             maxiters = argsresult["expectediters"].as<int>();
         emulate(indata, ucrom, cdf, maxiters, argsresult.count("debug"), argsresult.count("emuprint"), argsresult.count("controlflow"));
+
+        if (msptr) free(msptr);
 
         return 0;
     } else if (mode == UCODE) {
