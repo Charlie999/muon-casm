@@ -264,6 +264,7 @@ unsigned int lim24(unsigned int res);
 
 bool ie = false;
 bool timerready = false;
+bool swint = false;
 
 void icheck() {
     if (!ie) return;
@@ -276,7 +277,13 @@ void icheck() {
     uchar iid = 0;
     bool interrupt = false;
 
-    if (timerready) {
+    if (swint) {
+        swint = false;
+        interrupt = true;
+        iid = 2;
+    }
+
+    if (timerready && !interrupt ) {
         timerready = false;
         interrupt = true;
         iid = 4;
@@ -464,6 +471,9 @@ void emulate(const std::vector<std::string>& rmem, unsigned char* ucrom, const s
                 case UC_IE:
                     ie = true;
                     dlog("uc ie\n");
+                    break;
+                case UC_SFI:
+                    swint = true;
                     break;
                 case UC_END:
                     dlog("uc end\n");
