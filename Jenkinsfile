@@ -3,7 +3,9 @@ node("windows-1") {
   stage("Build CASM for Windows") {
     git url: 'https://github.com/MUON-III/muon-casm.git'
     dir("build"){
-      bat 'rmdir "Release" /S /Q'
+      if(fileExists("Release")) {
+        bat 'rmdir "Release" /S /Q'
+      }
       bat 'cmake .. -G "Visual Studio 17 2022" -A x64'
       bat 'cmake --build . --config Release -- /nologo /verbosity:minimal /maxcpucount'
       archiveArtifacts artifacts: 'Release/casm.exe', fingerprint: true
