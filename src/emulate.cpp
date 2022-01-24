@@ -343,10 +343,10 @@ void emulate(const std::vector<std::string>& rmem, unsigned char* ucrom, const s
             keyboard[0] = 1;
 	}
 #else
-	if (_kbhit() && !keyboard[0]) {
-            //read(STDIN_FILENO, &keyboard[1], 1);
-	    keyboard[1] = _getch();
-        keyboard[0] = 1;
+	if (kb_available() && !keyboard[0]) {
+            read(STDIN_FILENO, &keyboard[1], 1);
+	    //keyboard[1] = _getch();
+            keyboard[0] = 1;
 	}   
 #endif
         icheck();
