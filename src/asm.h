@@ -13,6 +13,24 @@ struct assembleropts {
     bool quiet;
     bool onlyresolveafter;
     bool dumplabels;
+    bool mulink;
+};
+
+struct mulink_lookup {
+    uint ptr;
+    uint mask;
+    char name[256];
+};
+
+struct label {
+    char name[256]{};
+    uint ptr{};
+};
+
+struct labellookup {
+    char name[256]{};
+    uint ptr{};
+    uint mask{};
 };
 
 void assembler_setopts(struct assembleropts);
@@ -27,7 +45,8 @@ void emulate(const std::vector<std::string>&, unsigned char*, const std::string&
 void setemulatormem(long,uint);
 void emulator_set_mass_storage_reg(uint* arr);
 
-void assemble_resolve_final(std::vector<unsigned int>*);
+std::vector<struct mulink_lookup> assemble_resolve_final(std::vector<unsigned int>*);
+std::vector<struct label> assembler_get_labels();
 
 void ierror0(const std::string& reason, const std::string& insn);
 std::vector<std::string> split(const std::string& s, const std::string& delim);

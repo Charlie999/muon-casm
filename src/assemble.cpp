@@ -160,22 +160,15 @@ bool isComma(char ch) { return ch==','; }
 
 #define uint unsigned int
 
-struct label {
-    char name[256]{};
-    uint ptr{};
-};
-
-struct labellookup {
-    char name[256]{};
-    uint ptr{};
-    uint mask{};
-};
-
 std::vector<struct label> labelptrs;
 std::vector<struct labellookup> labelqueue;
 
 std::vector<gotentry> gotentries_in;
 std::vector<gotentry> gotentries_out;
+
+std::vector<struct label> assembler_get_labels() {
+    return labelptrs;
+}
 
 label* getlabel(const std::string& n) {
     if (n.length() > 5 && memcmp(n.c_str(),"%GOT:",5)==0) {
@@ -214,7 +207,7 @@ unsigned int decodeint(std::string a, uint _ptr, uint imask, bool lookuplabels, 
                 std::string lblname(t.c_str() + 1);
                 lblname.pop_back();
                 lelog("get label %s\n", lblname.c_str());
-                if (opts.onlyresolveafter && enablelabels) {
+                if ((opts.mulink || opts.onlyresolveafter) && enablelabels && lookuplabels) {
                     labellookup llk;
                     strncpy(llk.name, lblname.c_str(), 256);
                     llk.ptr = _ptr;
@@ -269,8 +262,10 @@ void ierror1(const std::string& reason, const std::string& operand) {
 }
 
 uint ptr = 0;
+uint org = 0;
 
 void assembler_org(uint o, std::vector<unsigned int>* outdata) {
+    org = 0;
     for (int i=0;i<o;i++)
         outdata->push_back(0);
     ptr += o;
@@ -307,7 +302,7 @@ std::vector<unsigned char> assemble(const std::string& insnraw,bool movswap,std:
 
         lelog("running lookups for label %s\n",lbl.name);
         for (auto llk=labelqueue.begin(); llk!=labelqueue.end();) {
-            if (strncmp(llk->name, lbl.name, 256) == 0) {
+            if (strncmp(llk->name, lbl.name, 256) == 0 && !opts.mulink) {
                 label *llkb = getlabel(std::string(llk->name));
                 if (!llkb) {
                     lelog("warning: unknown label %s\n", llk->name);
@@ -315,7 +310,7 @@ std::vector<unsigned char> assemble(const std::string& insnraw,bool movswap,std:
                 }
 
                 lelog("applying lookup at insn %s [ptr=0x%X, mask=0x%06X, np=0x%06X]\n", insnraw.c_str(), llk->ptr,
-                       llk->mask, llkb->ptr);
+                           llk->mask, llkb->ptr);
                 (*outdata)[llk->ptr] = outdata->at(llk->ptr) | (llkb->ptr & llk->mask);
 
                 labelqueue.erase(llk);
@@ -929,7 +924,7 @@ std::vector<unsigned char> assemble(const std::string& insnraw,bool movswap,std:
     return ret;
 }
 
-void assemble_resolve_final(std::vector<unsigned int>* outdata) {
+std::vector<struct mulink_lookup> assemble_resolve_final(std::vector<unsigned int>* outdata) {
 #ifdef ENABLE_LABEL_ENGINE
     lelog("resolving all remaining labels...\n");
 
@@ -937,16 +932,36 @@ void assemble_resolve_final(std::vector<unsigned int>* outdata) {
     for (auto lbl : labelptrs)
         lelog(" => %s\n",lbl.name);
 
+    std::vector<struct mulink_lookup> mulinks = std::vector<struct mulink_lookup>();
+
     for (auto llk=labelqueue.begin(); llk!=labelqueue.end();) {
 
         label* llkb = getlabel(std::string(llk->name));
         if (!llkb) {
-            lelog("error: unknown label \"%s\" on final pass\n",llk->name);
-            exit(-1);
+            if (opts.mulink) {
+                lelog("adding label \"%s\" to mulink lookup file\n", llk->name);
+                struct mulink_lookup mlkl;
+                strncpy(mlkl.name, llk->name, 255);
+                mlkl.mask = llk->mask;
+                mlkl.ptr = llk->ptr;
+                mulinks.push_back(mlkl);
+            } else {
+                lelog("error: unknown label \"%s\" on final pass\n", llk->name);
+                exit(-1);
+            }
+        } else {
+            if (opts.mulink) {
+                lelog("adding label \"%s\" to mulink lookup file\n", llk->name);
+                struct mulink_lookup mlkl;
+                strncpy(mlkl.name, llk->name, 255);
+                mlkl.mask = llk->mask;
+                mlkl.ptr = llk->ptr;
+                mulinks.push_back(mlkl);
+            } else {
+                lelog("applying final lookup [ptr=0x%X, mask=0x%06X, np=0x%06X]\n", llk->ptr, llk->mask, llkb->ptr);
+                (*outdata)[llk->ptr] = outdata->at(llk->ptr) | (llkb->ptr & llk->mask);
+            }
         }
-
-        lelog("applying final lookup [ptr=0x%X, mask=0x%06X, np=0x%06X]\n",llk->ptr,llk->mask,llkb->ptr);
-        (*outdata)[llk->ptr] = outdata->at(llk->ptr) | (llkb->ptr & llk->mask);
 
         labelqueue.erase(llk);
     }
@@ -959,5 +974,7 @@ void assemble_resolve_final(std::vector<unsigned int>* outdata) {
             printf(" => %s:0x%06X\n",lbl.name, lbl.ptr);
         printf("==============\n");
     }
+
+    return mulinks;
 #endif
 }

@@ -115,6 +115,8 @@ int main(int argc, char** argv) {
             ("quiet","quiet down the assembler (don't print debug notes)")
             ("resolveafter","only resolve labels post-assembly, will improve compile time but sacrifice code size")
             ("dumplabels","dump all labels after processing")
+            ("mulink","output mulink-format label lookup file",cxxopts::value<std::string>())
+            ("mulinksec","mulink section",cxxopts::value<std::string>())
             ("dumpfixedinclude","dump the include-processed source file");
 
     auto argsresult = options.parse(argc, argv);
@@ -138,7 +140,7 @@ int main(int argc, char** argv) {
     else
         mode = COMPILE;
 
-    if (argsresult.count("binary"))
+    if (argsresult.count("binary") || argsresult.count("mulink"))
         omode = BINARY;
     else
         omode = HEX;
@@ -155,11 +157,13 @@ int main(int argc, char** argv) {
         struct assembleropts opts;
         memset((void*)&opts, 0, sizeof(opts));
         if (argsresult.count("quiet"))
-            opts.quiet = 1;
+            opts.quiet = true;
         if (argsresult.count("resolveafter"))
-            opts.onlyresolveafter = 1;
+            opts.onlyresolveafter = true;
         if (argsresult.count("dumplabels"))
-            opts.dumplabels = 1;
+            opts.dumplabels = true;
+        if (argsresult.count("mulink"))
+            opts.mulink = true;
 
         assembler_setopts(opts);
 
@@ -222,7 +226,37 @@ int main(int argc, char** argv) {
                 q++;
             }
         }
-        assemble_resolve_final(&out);
+        std::vector<struct mulink_lookup> mulinks = assemble_resolve_final(&out);
+
+        if (argsresult.count("mulink")) {
+            std::string gn = argsresult["mulink"].as<std::string>();
+            printf("[casm-mulink] saving mulink file as %s\n",gn.c_str());
+            std::ofstream wf(gn);
+            char buf[300];
+	    snprintf(buf, 299, "!MULINK1\n");
+	    wf.write(buf, (long)strlen(buf));
+            if (argsresult.count("org"))
+                snprintf(buf, 299, "$ORG:%06X\n",argsresult["org"].as<int>());
+            else
+                snprintf(buf, 299, "$ORG:%06X\n",0);
+
+            wf.write(buf, (long)strlen(buf));
+            if (argsresult.count("mulinksec")) {
+                snprintf(buf, 299, "$SEC:%s\n", argsresult["mulinksec"].as<std::string>().c_str());
+            }
+            wf.write(buf, (long)strlen(buf));
+            std::vector<struct label> labelptrs = assembler_get_labels();
+            for (auto label : labelptrs) {
+                snprintf(buf, 299, "+%s;%06X\n",label.name,label.ptr);
+                wf.write(buf,(long)strlen(buf));
+            }
+            for (auto mulink : mulinks) {
+                snprintf(buf, 299, "-%s;%06X;%06X\n",mulink.name,mulink.ptr,mulink.mask);
+                wf.write(buf,(long)strlen(buf));
+            }
+            wf.close();
+            printf("[casm-mulink] saved mulink file\n");
+        }
 
         if (argsresult.count("gotout")) {
             std::string gn = argsresult["gotout"].as<std::string>();
