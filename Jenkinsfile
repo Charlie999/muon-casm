@@ -1,7 +1,7 @@
 
 node("windows-1") {
   stage("Build CASM for Windows") {
-    git url: 'https://muon-git.i-am.cool/charlie/muon-casm.git'
+    git url: 'http://172.20.1.41/MUON-III/muon-casm.git'
     dir("build"){
       if(fileExists("Release")) {
         bat 'rmdir "Release" /S /Q'
@@ -23,7 +23,7 @@ node("master") {
       CC  = '/usr/lib/ccache/gcc'
       CXX = '/usr/lib/ccache/g++'
     }
-    git url: 'https://muon-git.i-am.cool/charlie/muon-casm.git'
+    git url: 'http://172.20.1.41/MUON-III/muon-casm.git'
     dir("build"){
       sh 'rm -f casm-static'
       sh 'cmake .. -DVERSION=latest -DBUILD_STATIC=true -DUSE_CCACHE=true -DMUST_USE_CCACHE=true'
