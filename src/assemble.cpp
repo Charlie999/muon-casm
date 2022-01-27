@@ -849,7 +849,7 @@ std::vector<unsigned char> assemble(const std::string& insnraw,bool movswap,std:
             uint a = decodeint(insn.at(1),ptr+3,0x00FFFF,true, true);
             uint b = decodeint(insn.at(2),ptr+2,0x00FFFF,true, true);
 
-            std::string lblname = "casm-call-reloc-" + random_string(16);
+            std::string lblname = "casm-call-reloc-" + random_string(64);
 
             uint after_ptr = decodeint("{"+lblname+"}", ptr+1, 0xFFFFFF, true, true);
 
@@ -879,7 +879,10 @@ std::vector<unsigned char> assemble(const std::string& insnraw,bool movswap,std:
 
             uint a = decodeint(insn.at(1),ptr+3,0xFFFFFF,true, true);
 
-            uint after_ptr = ptr+4;
+            std::string lblname = "casm-scall-reloc-" + random_string(64);
+            uint after_ptr = decodeint("{"+lblname+"}", ptr+1, 0xFFFFFF, true, true);
+            definelabel(insnraw, outdata, lblname, ptr + 4);
+
             ret.push_back(CPU_ELDB);
             ret.push_back(0);
             ret.push_back(0);
