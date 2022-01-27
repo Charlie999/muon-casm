@@ -689,11 +689,14 @@ std::vector<unsigned char> assemble(const std::string& insnraw,bool movswap,std:
                 ierror0("invalid instruction format",insnraw);
             uint a = decodeint(insn.at(1),ptr,0x00FFFF,true, true);
 
+            std::string lblname = "casm-ldaptr-reloc-" + random_string(64);
+            uint sp = decodeint("{"+lblname+"}", ptr + 1, 0xFFFFFF, true, true);
+            definelabel(insnraw, outdata, lblname, ptr + 2);
+
             ret.push_back(CPU_LDAPTR);
             ret.push_back((a&0xFF00)>>8);
             ret.push_back(a&0xFF);
 
-            uint sp = ptr+2;
             ret.push_back((sp&0xFF0000)>>16);
             ret.push_back((sp&0xFF00)>>8);
             ret.push_back(sp&0xFF);
@@ -709,11 +712,14 @@ std::vector<unsigned char> assemble(const std::string& insnraw,bool movswap,std:
                 ierror0("invalid instruction format",insnraw);
             uint a = decodeint(insn.at(1),ptr,0x00FFFF,true, true);
 
+            std::string lblname = "casm-otaptr-reloc-" + random_string(64);
+            uint sp = decodeint("{"+lblname+"}", ptr + 1, 0xFFFFFF, true, true);
+            definelabel(insnraw, outdata, lblname, ptr + 2);
+
             ret.push_back(CPU_OTAPTR);
             ret.push_back((a&0xFF00)>>8);
             ret.push_back(a&0xFF);
 
-            uint sp = ptr+2;
             ret.push_back((sp&0xFF0000)>>16);
             ret.push_back((sp&0xFF00)>>8);
             ret.push_back(sp&0xFF);
@@ -850,9 +856,7 @@ std::vector<unsigned char> assemble(const std::string& insnraw,bool movswap,std:
             uint b = decodeint(insn.at(2),ptr+2,0x00FFFF,true, true);
 
             std::string lblname = "casm-call-reloc-" + random_string(64);
-
-            uint after_ptr = decodeint("{"+lblname+"}", ptr+1, 0xFFFFFF, true, true);
-
+            uint after_ptr = decodeint("{"+lblname+"}", ptr + 1, 0xFFFFFF, true, true);
             definelabel(insnraw, outdata, lblname, ptr + 4);
 
             ret.push_back(CPU_ELDB);
@@ -906,13 +910,17 @@ std::vector<unsigned char> assemble(const std::string& insnraw,bool movswap,std:
                 ierror0("invalid instruction format",insnraw);
             uint a = decodeint(insn.at(1),ptr,0x00FFFF,true, true);
 
+            std::string lblname = "casm-ijmp-reloc-" + random_string(64);
+            uint after_ptr = decodeint("{"+lblname+"}", ptr + 1, 0xFFFFFF, true, true);
+            definelabel(insnraw, outdata, lblname, ptr + 2);
+
             ret.push_back(CPU_IJMP);
             ret.push_back((a&0xFF00)>>8);
             ret.push_back(a&0xFF);
 
-            ret.push_back(((ptr+2)&0xFF0000)>>16);
-            ret.push_back(((ptr+2)&0xFF00)>>8);
-            ret.push_back((ptr+2)&0xFF);
+            ret.push_back((after_ptr&0xFF0000)>>16);
+            ret.push_back((after_ptr&0xFF00)>>8);
+            ret.push_back(after_ptr&0xFF);
 
             ret.push_back(0);
             ret.push_back(0);
